@@ -1,0 +1,263 @@
+/* Crossing Persia, the Maps page: the day and the map controls on the left, the route map on the right */
+
+:root {
+  --bg: #0d0c0a;
+  --gap: clamp(8px, 0.75vw, 12px);
+  --r: clamp(18px, 1.9vw, 30px);
+  --rust: #a5391f;
+  --rust-deep: #8e2f18;
+  --stone: #c9c2b6;
+  --paper: #ebe8e2;
+  --ink: #161411;
+  --ink-soft: #3b3731;
+  --cream: #f6efe2;
+  --gold-1: #f5e6c4;
+  --gold-2: #dcbd82;
+  --gold-3: #b48848;
+  --ease: cubic-bezier(.22, .8, .2, 1);
+}
+
+* { box-sizing: border-box; }
+html, body { margin: 0; height: 100%; background: var(--bg); color: var(--cream); }
+body {
+  font-family: "Inter Tight", "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+button { font: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; }
+img { display: block; }
+h1, h2, h3 { margin: 0; }
+:focus-visible { outline: 2px solid var(--gold-2); outline-offset: 3px; }
+
+/* the main view behind the cover */
+.home {
+  position: fixed; inset: 0; z-index: 1;
+  display: grid; grid-template-columns: minmax(300px, 31%) 1fr;
+  gap: var(--gap); padding: var(--gap);
+  background: var(--bg);
+}
+
+.home-left { position: relative; min-height: 0; container-type: size; --pad: clamp(20px, 2.2vw, 34px);
+  /* sizes copied from the reference picture, all measured against the panel's width */
+  --D: 64.7cqw;        /* photo circle: 174px across on a 269px wide panel */
+  --ring: 4.1cqw;      /* dark ring: 11px thick */
+  --dial-top: -1.1cqw; /* circle pokes 3px above the panel's top edge */
+  --dial-right: -0.4cqw; /* and 1px past its right edge */
+}
+.home-card {
+  position: absolute; inset: 0;
+  border-radius: var(--r);
+  background: radial-gradient(120% 90% at 0% 100%, rgba(255,140,90,.14), transparent 55%), var(--rust);
+  color: var(--cream);
+  padding: var(--pad);
+  display: flex; flex-direction: column;
+}
+/* the circle sits over the top right corner, in a dark ring that bites into the red card */
+.dial {
+  position: absolute; top: var(--dial-top); right: var(--dial-right);
+  width: var(--D); aspect-ratio: 1; border-radius: 50%;
+  overflow: hidden; isolation: isolate;
+  box-shadow: 0 0 0 var(--ring) var(--bg);
+  background: #1d1712;
+}
+.dial img {
+  position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 30% 36%;
+  filter: sepia(.6) saturate(.8) contrast(1.1) brightness(.4);
+  transform: scale(1.02);
+  transition: transform 1.2s var(--ease), filter .6s;
+}
+.dial-shade {
+  position: absolute; inset: 0;
+  background: radial-gradient(circle at 50% 50%, rgba(12,9,7,.7) 0%, rgba(12,9,7,.45) 45%, rgba(12,9,7,.8) 100%);
+}
+.dial-lines {
+  position: absolute; inset: 0; width: 100%; height: 100%;
+  fill: none; stroke: rgba(246,239,226,.7); stroke-width: .6;
+}
+.dial-lines .faravahar { opacity: .92; }
+.dial-lines .owl { opacity: .92; }
+
+/* each planet goes round its own orbit; the symbol turns back the other way so it stays upright */
+.dial-lines .planets .ring { stroke: rgba(246,239,226,.24); stroke-width: .4; }
+.dial-lines .planet {
+  transform-box: view-box; transform-origin: 100px 100px;
+  animation: orbit var(--t) linear var(--d) infinite;
+}
+.dial-lines .planet text {
+  fill: #fff; stroke: none;
+  font-family: "Segoe UI Symbol", "Noto Sans Symbols 2", "Noto Sans Symbols", "DejaVu Sans", serif;
+  font-size: 7.5px; text-anchor: middle; dominant-baseline: central;
+  paint-order: stroke; stroke: #14100c; stroke-width: 2.4px;
+  transform-box: fill-box; transform-origin: center;
+  animation: orbit var(--t) linear var(--d) infinite reverse;
+}
+@keyframes orbit { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) {
+  .dial-lines .planet, .dial-lines .planet text { animation: none; }
+}
+.dial-text {
+  position: absolute; inset: 0;
+  display: grid; place-items: center; text-align: center;
+  font-family: "Marcellus", Georgia, serif; color: var(--cream);
+  text-shadow: 0 2px 16px rgba(0,0,0,.55);
+}
+.dial-text > span { grid-area: 1 / 1; }
+.dial-text > [hidden] { display: none; }
+.dial-day { font-size: calc(var(--D) * .15); line-height: 1; letter-spacing: .02em; }
+.dial-name { font-size: calc(var(--D) * .085); line-height: 1.1; letter-spacing: .08em; text-transform: uppercase; max-width: 6em; }
+/* while the text is changing it passes through the water ripple drawn in maps.html */
+.dial-text.rippling > span { filter: url(#dialRipple); }
+/* rings spreading out from the middle, like a stone dropped in a puddle */
+.dial-ring {
+  position: absolute; left: 50%; top: 50%; width: 30%; aspect-ratio: 1; margin: -15% 0 0 -15%;
+  border-radius: 50%; border: 1px solid rgba(246,239,226,.22); pointer-events: none;
+  animation: dial-ring 2.4s ease-out forwards;
+}
+@keyframes dial-ring { from { transform: scale(.6); opacity: .7; } to { transform: scale(2.4); opacity: 0; } }
+
+/* the three layer buttons, just left of the circle */
+.home-top {
+  height: calc(var(--D) + var(--dial-top) - var(--pad));
+  margin-right: calc(var(--D) + var(--dial-right) + var(--ring) - var(--pad) + 14px);
+  display: flex; align-items: center; justify-content: flex-end;
+}
+/* the big round back button, under the slider on the red card */
+.back-btn {
+  align-self: flex-start; flex: none; margin-top: clamp(18px, 3vh, 32px);
+  width: clamp(56px, 22cqw, 84px); aspect-ratio: 1; border-radius: 50%;
+  display: grid; place-items: center;
+  background: var(--bg); color: var(--cream);
+  box-shadow: 0 6px 20px rgba(0,0,0,.28);
+  transition: transform .3s var(--ease), background-color .25s;
+}
+.back-btn svg { width: 44%; height: 44%; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; transition: transform .3s var(--ease); }
+.back-btn:hover { background: #1d1712; }
+.back-btn:hover svg { transform: translateX(-3px); }
+.back-btn:active { transform: scale(.95); }
+
+.layer-btns { display: flex; flex-direction: column; align-items: stretch; gap: 8px; }
+.layer-btn {
+  height: 36px; padding: 0 16px; border-radius: 999px;
+  font-size: 11px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; white-space: nowrap;
+  color: var(--cream);
+  box-shadow: inset 0 0 0 1px rgba(246,239,226,.55);
+  transition: background-color .25s, color .25s, box-shadow .25s, opacity .25s;
+}
+.layer-btn:hover { background: rgba(246,239,226,.12); }
+.layer-btn[aria-pressed="true"] { background: var(--cream); color: var(--rust-deep); box-shadow: none; }
+.layer-btn.chosen { box-shadow: 0 0 0 2px var(--rust), 0 0 0 3px var(--gold-1); }
+.layer-btn:disabled { opacity: .5; cursor: default; }
+
+/* the strength slider, no numbers */
+.strength {
+  -webkit-appearance: none; appearance: none;
+  width: 100%; height: 22px; margin: clamp(30px, 5vh, 48px) 0 0; background: none; cursor: pointer;
+  --v: 30%;
+}
+.strength:disabled { opacity: .5; cursor: default; }
+.strength::-webkit-slider-runnable-track {
+  height: 3px; border-radius: 3px;
+  background: linear-gradient(90deg, var(--cream) var(--v), rgba(246,239,226,.28) var(--v));
+}
+.strength::-moz-range-track { height: 3px; border-radius: 3px; background: rgba(246,239,226,.28); }
+.strength::-moz-range-progress { height: 3px; border-radius: 3px; background: var(--cream); }
+/* the handle: a cream ring with a cream dot in the middle */
+.strength::-webkit-slider-thumb {
+  -webkit-appearance: none; box-sizing: border-box; width: 20px; height: 20px; margin-top: -8.5px; border-radius: 50%;
+  border: 2px solid var(--cream);
+  background: radial-gradient(circle, var(--cream) 0 3.5px, var(--rust) 4.5px);
+}
+.strength::-moz-range-thumb {
+  box-sizing: border-box; width: 20px; height: 20px; border-radius: 50%;
+  border: 2px solid var(--cream);
+  background: radial-gradient(circle, var(--cream) 0 3.5px, var(--rust) 4.5px);
+}
+.strength:focus-visible { outline-offset: 4px; }
+
+/* the title and the Map Sources button share the bottom line of the red card */
+.home-bottom {
+  position: relative; margin-top: auto;
+  display: flex; align-items: flex-end; justify-content: space-between; gap: 12px;
+}
+.home-links { flex: none; display: flex; flex-direction: column; align-items: stretch; gap: 8px; margin-bottom: .2em; }
+.home-links .sources-btn { justify-content: center; margin-bottom: 0; }
+.sources-btn { flex: none; display: inline-flex; align-items: center; text-decoration: none; height: 42px; padding: 0 20px; font-size: 12.5px; margin-bottom: .2em; }
+
+.home-title {
+  min-width: 0;
+  font-family: "Marcellus", Georgia, serif; font-weight: 400;
+  font-size: clamp(30px, 3.4vw, 60px); line-height: 1.02; letter-spacing: .01em;
+  text-transform: uppercase;
+}
+
+.home-map { position: relative; min-height: 0; border-radius: var(--r); overflow: hidden; background: #0b1118;
+  border: var(--gap) solid var(--rust); }   /* a frame all the way round, the same red as the card on the left */
+.map-frame { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; display: block; }
+
+/* the map's own pieces: numbered places, places passed on the road, the walking man, and the boxes that open on them */
+.map-frame .maplibregl-map, .map-frame.maplibregl-map { font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+.marker { width: 31px; height: 31px; border-radius: 50%; border: 3px solid #f9fbfd; box-shadow: 0 2px 13px #0b1b2a88; color: #fff; font-weight: 800; display: flex; align-items: center; justify-content: center; font-size: 13px; cursor: pointer; padding: 0; }
+.waypoint { width: 14px; height: 14px; border-radius: 50%; border: 3px solid #fff; background: #5d6b78; box-shadow: 0 1px 6px #0b1b2a88; cursor: pointer; padding: 0; }
+.man { width: 34px; height: 34px; border-radius: 50% 50% 50% 0; transform: rotate(-45deg); background: #c0392b; border: 3px solid #fff; box-shadow: 0 3px 10px #0007; color: #fff; display: grid; place-items: center; cursor: pointer; padding: 0; }
+.man svg { transform: rotate(45deg); }
+.route-off .marker, .route-off .waypoint, .route-off .man { display: none; }
+.marker, .waypoint, .man { opacity: var(--route-strength, 1); }
+.maplibregl-popup { font-size: 13px; line-height: 1.55; max-width: 290px; z-index: 10; }   /* boxes always sit above the place markers and Arion */
+.maplibregl-popup-content { border-radius: 13px; box-shadow: 0 5px 20px #0004; padding: 16px 18px; color: #14202c; }
+.popup-here { display: flex; align-items: center; gap: 5px; margin: 6px 0 4px; color: #c0392b; font-weight: 700; font-size: 12px; }
+.popup-here svg { width: 16px; height: 16px; }
+.popup-title { font-size: 17px; font-family: Georgia, serif; font-weight: 500; margin: 0 0 4px; }
+.popup-sub { font-size: 11px; font-weight: 750; letter-spacing: .07em; text-transform: uppercase; color: #5b6d82; }
+
+/* ------------------------------------------------------------ phones
+   A short red card on top and the map filling the rest of the screen, so a swipe moves the map, not the page.
+   In the card: the back button and the title on the first line, with the circle in the top right corner as on
+   the desktop; then the three layer buttons in one row, the slider, and the two link buttons side by side. */
+@media (max-width: 720px) {
+  .home { display: flex; flex-direction: column; overflow-y: auto; }
+  .home-left { flex: none; }
+  .home-map { flex: 1 1 auto; min-height: 320px; }
+}
+/* phones upright, and phones turned sideways (where the map stays on the right and this card is the left column) */
+@media (max-width: 720px), (max-height: 500px) and (max-width: 1000px) {
+  :root { --gap: 8px; --r: 22px; }
+  .home-left { container-type: normal; --pad: 16px;
+    --D: clamp(104px, 30vw, 132px); --ring: 7px; --dial-top: -3px; --dial-right: -3px; }
+  .home-card {
+    position: relative; inset: auto;
+    display: grid; grid-template-columns: auto 1fr; align-items: center; column-gap: 14px;
+    grid-template-areas: "back title" "layers layers" "slider slider" "links links";
+  }
+  .home-top, .home-bottom { display: contents; }
+  .back-btn { grid-area: back; width: 52px; margin: 0; align-self: center; }
+  .home-title { grid-area: title; font-size: clamp(21px, 6vw, 26px); line-height: 1.05;
+    min-height: calc(var(--D) + var(--dial-top) - var(--pad) - 4px); display: flex; align-items: center;
+    padding-right: calc(var(--D) + var(--dial-right) + var(--ring) - var(--pad) + 6px); }
+  .layer-btns { grid-area: layers; flex-direction: row; gap: 8px; margin-top: 14px; }
+  .layer-btns .layer-btn { flex: 1 1 0; min-width: 0; height: 40px; padding: 0 6px; letter-spacing: .08em; }
+  .strength { grid-area: slider; margin: 12px 0 0; }
+  .home-links { grid-area: links; flex-direction: row; gap: 8px; margin: 12px 0 0; }
+  .home-links .sources-btn { flex: 1 1 0; min-width: 0; height: 44px; padding: 0 8px; font-size: 12px; }
+  /* a place's box opens as a card along the bottom of the map, so it never runs off the screen */
+  .home-map .maplibregl-popup { transform: none !important; top: auto !important; left: 8px !important; right: 8px; bottom: 8px; max-width: none !important; }
+  .home-map .maplibregl-popup-tip { display: none; }
+  .home-map .maplibregl-popup-content { max-height: min(60vh, 420px); overflow-y: auto; }
+}
+@media (max-height: 500px) and (max-width: 1000px) and (min-width: 721px) {
+  .home { grid-template-columns: 320px 1fr; }
+  .home-left { --D: 104px; }
+  .home-title { font-size: 20px; }
+  .home-card { height: 100%; align-content: space-between; }
+}
+
+/* ------------------------------------------------------------ every box on the map (stops, road places, countries, Arion) */
+.maplibregl-popup-content .popup-title { font-size: 24px; margin: 0 0 6px; }
+.maplibregl-popup-content .popup-here { font-size: 15px; margin: 0 0 12px; }
+.popup-here svg { width: 18px; height: 18px; }
+/* every day sits in its own gold box; hovering fills the box with gold */
+.popup-day { display: block; margin: 0 0 10px; padding: 8px 10px; border: 2px solid var(--gold-2); color: #14202c; text-decoration: none; font-size: 14px; transition: background-color .2s; }
+.popup-day:hover { background-color: var(--gold-2); }
+.popup-day:focus-visible { outline: none; }   /* the box already shows; no second frame when the box opens */
+/* a real X to close the box */
+.maplibregl-popup-close-button { width: 36px; height: 36px; font-size: 30px; line-height: 1; font-weight: 400; color: #14202c; top: 4px; right: 4px; border-radius: 0; }
+.maplibregl-popup-close-button:hover { background-color: var(--gold-2); }
+.maplibregl-popup-content:has(.maplibregl-popup-close-button) .popup-title { padding-right: 36px; }

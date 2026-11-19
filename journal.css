@@ -1,0 +1,238 @@
+/* Crossing Persia, the Travel Journal page.
+   Each week is two squares side by side across the full width of the screen.
+   Every shape is placed in percent of its square (cqw), measured from the reference picture. */
+
+:root {
+  --bg: #0d0c0a;
+  --gap: clamp(8px, 0.75vw, 12px);
+  --cream: #f6efe2;
+  --gold-1: #f5e6c4;
+  --gold-2: #dcbd82;
+  --orange: #ec6a2c;
+  --pink: #e88da2;
+  --ease: cubic-bezier(.22, .8, .2, 1);
+}
+
+* { box-sizing: border-box; }
+html { scroll-snap-type: y proximity; }
+html, body { margin: 0; background: var(--bg); color: var(--cream); }
+body {
+  font-family: "Inter Tight", "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+img { display: block; }
+:focus-visible { outline: 2px solid var(--gold-2); outline-offset: 3px; }
+
+/* ------------------------------------------------------------ back button */
+
+/* The back button stays fixed in the middle of the black strip on the left, halfway down the screen, while the page scrolls.
+   The strip is the 5% of the screen left beside the cards, plus the small gap before them. */
+.top {
+  position: fixed; z-index: 10;
+  left: calc((100% - 90vw) / 4 + var(--gap) / 2); top: 50%;   /* 100% here is the screen width without the scrollbar */
+  translate: -50% -50%;
+}
+/* on narrow screens the strip is too thin for the button, so it sits at the top of the page instead */
+@media (max-width: 1200px) {
+  .top { position: static; translate: none; padding: var(--gap) var(--gap) 0; scroll-snap-align: start; }
+}
+.back-btn {
+  width: 52px; aspect-ratio: 1; border-radius: 50%;
+  display: grid; place-items: center;
+  background: #1d1712; color: var(--cream);
+  transition: transform .3s var(--ease), background-color .25s;
+}
+.back-btn svg { width: 44%; height: 44%; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; transition: transform .3s var(--ease); }
+.back-btn:hover { background: #2a221a; }
+.back-btn:hover svg { transform: translateX(-3px); }
+.back-btn:active { transform: scale(.95); }
+
+/* ------------------------------------------------------------ weeks */
+
+/* slightly smaller than the full width, leaving a little black at the sides */
+.journal { width: min(100%, 90vw); margin: 0 auto; padding: var(--gap) var(--gap) calc(var(--gap) * 4); display: flex; flex-direction: column; gap: calc(var(--gap) * 3); }
+.week {
+  display: grid; grid-template-columns: 1fr 1fr; gap: var(--gap);
+  scroll-snap-align: start; scroll-margin-top: var(--gap);
+}
+.half { position: relative; aspect-ratio: 1; container-type: inline-size; }
+@media (max-width: 720px) {
+  .week { grid-template-columns: 1fr; }
+}
+
+/* ------------------------------------------------------------ cards */
+
+.card {
+  --r: 4.5cqw;
+  position: absolute; overflow: hidden;
+  border-radius: var(--r);
+  background: #1d1712; color: var(--cream);
+  text-decoration: none;
+}
+.card img {
+  position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover;
+}
+.card img.cropped { inset: auto; max-width: none; object-fit: fill; transform-origin: center; visibility: hidden; }
+.card img.cropped.placed { visibility: visible; }
+/* a light wash of the picture's own average colour; hovering takes it away instead of zooming */
+.tint { position: absolute; inset: 0; z-index: 1; opacity: .35; pointer-events: none; transition: opacity .45s var(--ease); }
+.card:hover .tint, .card:focus-visible .tint { opacity: 0; }
+
+/* Every label is a thin cream outline, in the style of the Wisdom, Glow and Utopia labels in the reference picture.
+   Each outline echoes its own card: its round ends sit on the same side as the card's large round corners,
+   and it is placed where it cannot cross a curved edge of the card.
+   --w and --h are the outline's width and height; the words are sized to fill it. */
+.badge {
+  --w: 30cqw; --h: 14cqw;
+  position: absolute; z-index: 2;
+  width: var(--w); height: var(--h);
+  display: flex; align-items: center; justify-content: center; text-align: center;
+  padding: 0;
+  border: max(1px, .19cqw) solid rgba(246,239,226,.9);
+  color: var(--cream);
+  background: rgba(13,12,10,.4);
+  -webkit-backdrop-filter: blur(10px) saturate(1.2);
+          backdrop-filter: blur(10px) saturate(1.2);
+  font-size: calc(var(--h) * .45); line-height: 1; font-weight: 600; letter-spacing: -.03em;
+  white-space: nowrap;
+  transition: background-color .35s var(--ease), color .35s var(--ease);
+}
+.card.day:hover .badge, .card.day:focus-visible .badge { background: var(--cream); color: var(--bg); }
+/* round cards: the outline sits at the bottom middle */
+.s-a .badge, .s-g .badge, .s-k .badge, .s-n .badge { left: 50%; translate: -50% 0; }
+
+/* Day 1: round card with a square top right corner, so the outline is round everywhere except its top right */
+.s-a .badge { --w: 24cqw; --h: 11cqw; bottom: 4.5cqw; border-radius: calc(var(--h) / 2) 0 calc(var(--h) / 2) calc(var(--h) / 2); }
+/* Day 2: round at both ends, low in the card */
+.s-b .badge { --w: 33cqw; --h: 15cqw; left: 4.45cqw; bottom: 3.4cqw; border-radius: calc(var(--h) / 2); }
+/* Day 3: square top left like its card, round elsewhere */
+.s-c .badge { --w: 37.45cqw; --h: 18.53cqw; left: 1.74cqw; bottom: 1.74cqw; border-radius: 0 calc(var(--h) / 2) calc(var(--h) / 2) calc(var(--h) / 2); }
+/* Day 4: rounded top right and bottom left, like its card */
+.s-d .badge { --w: 30cqw; --h: 15.5cqw; left: 1.74cqw; top: 3.25cqw; border-radius: 0 calc(var(--h) / 2) 0 calc(var(--h) / 2); }
+/* Day 5: round top right and bottom left, like its card; centred in height so it stays clear of the curves */
+.s-e .badge { --w: 28.6cqw; --h: 13.5cqw; left: 2cqw; top: 25.97cqw; border-radius: 0 calc(var(--h) / 2) 0 calc(var(--h) / 2); }
+/* Day 6: like Day 1 */
+.s-g .badge { --w: 20.5cqw; --h: 9.6cqw; bottom: 3.4cqw; border-radius: calc(var(--h) / 2) 0 calc(var(--h) / 2) calc(var(--h) / 2); }
+/* Day 7 and Day 8: their cards are square at the bottom left, so the outline is too; round elsewhere */
+.s-f .badge, .s-i .badge { --w: 37.45cqw; --h: 18.53cqw; left: 1.74cqw; bottom: 1.74cqw; border-radius: calc(var(--h) / 2) calc(var(--h) / 2) calc(var(--h) / 2) 0; }
+/* Day 10: the bottom of the card is cut by a circle, so the outline hangs from the top left; slight curve top left, round right end */
+.s-j .badge { --w: 37.45cqw; --h: 18.53cqw; left: 1.74cqw; top: 1.74cqw; border-radius: calc(var(--h) * .16) calc(var(--h) / 2) calc(var(--h) / 2) 0; }
+/* Day 11 and Day 14: round cards, outlines round at both ends */
+.s-k .badge { --w: 28cqw; --h: 13cqw; bottom: 4.5cqw; border-radius: calc(var(--h) / 2); }
+.s-n .badge { --w: 24cqw; --h: 11cqw; bottom: 4cqw; border-radius: calc(var(--h) / 2); }
+/* Day 13: round top right and bottom left like its card; bottom right, clear of the round corner */
+.s-o .badge { --w: 37.45cqw; --h: 18.53cqw; right: 1.74cqw; bottom: 1.74cqw; border-radius: 0 calc(var(--h) / 2) 0 calc(var(--h) / 2); }
+
+/* Day 12: the exact outline that holds the word WISDOM in the reference picture, measured pixel by pixel.
+   Outline: 9px from the card's left, 10px from its top, 194px by 96px (1 pixel = 0.19305cqw).
+   Top left corner curves 40px across and 44px down. Bottom left corner is square.
+   Right end is a stretched half circle, 40px deep and 96px tall. */
+.s-m .badge {
+  --w: 37.45cqw; --h: 18.53cqw; left: 1.74cqw; top: 1.93cqw;
+  border-radius: 7.72cqw 7.72cqw 7.72cqw 0 / 8.49cqw 9.27cqw 9.27cqw 0;
+  font-size: 8.4cqw;
+}
+/* Day 9: the exact outline that holds the words EVENING GLOW in the reference picture, measured pixel by pixel.
+   Outline: 193px by 96px, 7px from the card's right edge and 6px from its bottom.
+   All four corners curve 42px across and 48px down, so both ends are round but a little flatter than a half circle. */
+.s-l .badge {
+  --w: 37.26cqw; --h: 18.53cqw; right: 1.35cqw; bottom: 1.16cqw;
+  border-radius: 8.11cqw / 9.27cqw;
+  font-size: 8.4cqw;
+}
+
+/* week summaries: plain colour, the words large in the bottom left, no outline and no Dari */
+.card.summary {
+  display: flex; align-items: flex-end;
+  padding: 4.2cqw;
+  font-size: 7.4cqw; line-height: .98; font-weight: 600; letter-spacing: -.03em;
+}
+.sum-title { max-width: 7em; }
+.card.summary.s-p { justify-content: center; text-align: center; font-size: 6.2cqw; }
+
+/* English and Dari in one spot, copied from the cover; the script flickers between them */
+.swap-stack { display: inline-grid; vertical-align: baseline; }
+.swap-stack > span { grid-area: 1 / 1; }
+.swap-stack > .alt, .swap-stack.alt-on > .main { visibility: hidden; }
+.swap-stack.alt-on > .alt { visibility: visible; }
+.swap-stack.glitch { text-shadow: 2px 0 rgba(220, 189, 130, .75), -2px 0 rgba(165, 57, 31, .55); opacity: .88; }
+.dari {
+  font-family: "Noto Nastaliq Urdu", "Segoe UI", serif; font-weight: 700;
+  font-size: 1.2em; line-height: 1; letter-spacing: 0;
+  justify-self: center; align-self: end; translate: 0 -.22em;
+  color: var(--gold-1); text-shadow: 0 2px 14px rgba(0,0,0,.25);
+  transition: color .35s;
+}
+.card.day:hover .dari, .card.day:focus-visible .dari { color: var(--bg); text-shadow: none; }
+
+/* A turned-over week: the whole week is rotated half a turn, which turns every card shape and its place upside down.
+   The picture is turned back so it stays upright. The label and summary words are turned back on their own spot,
+   so they stay readable while their outline shapes stay turned with their cards. */
+.pic { position: absolute; inset: 0; }
+.week.flip { rotate: 180deg; }
+.week.flip .pic, .week.flip .badge, .week.flip .sum-title { rotate: 180deg; }
+/* in a turned-over week the summary sits in a curved card, so its words are centred to stay clear of the curve */
+.week.flip .card.summary { justify-content: center; align-items: center; text-align: center; }
+/* labels for the days that move into the summary's usual spots */
+.s-h .badge { --w: 30cqw; --h: 15cqw; right: 1.74cqw; bottom: 1.74cqw; border-radius: calc(var(--h) / 2) 0 0 calc(var(--h) / 2); }
+.s-p .badge { --w: 28cqw; --h: 13cqw; left: 6.17cqw; bottom: 3cqw; border-radius: calc(var(--h) / 2) calc(var(--h) / 2) 0 0; }
+
+/* Every card below is measured pixel by pixel from the reference picture (1170 pixels square).
+   One square half of a week is 518 pixels there and 100cqw here, so 1 pixel = 0.19305cqw.
+   Most corners in the picture are square; only the corners given a radius below are rounded. */
+
+/* ------------------------------------------------------------ arrangement A (odd weeks) */
+
+/* round picture, except its top right corner, which is square */
+.s-a { left: 0; top: 0; width: 41.89cqw; height: 42.28cqw; border-radius: 50% 0 50% 50%; }
+.s-b {
+  left: 0; top: 30.5cqw; width: 41.89cqw; height: 69.3cqw;
+  border-radius: 0 0 3.28cqw 3.28cqw;
+  /* the round picture above bites a curve out of the top, leaving a 10 pixel gap */
+  -webkit-mask: radial-gradient(circle at 20.85cqw -9.46cqw, transparent 22.97cqw, #000 calc(22.97cqw + .5px));
+          mask: radial-gradient(circle at 20.85cqw -9.46cqw, transparent 22.97cqw, #000 calc(22.97cqw + .5px));
+}
+.s-c { left: 43.44cqw; top: 0; width: 56.37cqw; height: 76.25cqw; border-radius: 0 3.28cqw 3.28cqw 3.28cqw; }
+.s-d { left: 43.44cqw; top: 77.8cqw; width: 56.56cqw; height: 22.01cqw; border-radius: 0 3.28cqw 0 3.28cqw; }
+/* tall card: half circles at the top right and bottom left, square elsewhere */
+.s-e { left: 0; top: .19cqw; width: 32.63cqw; height: 65.44cqw; border-radius: 0 16.31cqw 0 16.31cqw; }
+.s-f { left: 34.36cqw; top: 0; width: 65.64cqw; height: 65.64cqw; border-radius: 16.41cqw 0 0 0; }
+.s-g { left: 0; top: 67.37cqw; width: 32.63cqw; height: 32.43cqw; border-radius: 50% 0 50% 50%; }
+.s-h {
+  left: 33.98cqw; top: 67.18cqw; width: 66.02cqw; height: 33.01cqw;
+  border-radius: 0 0 0 13.13cqw;
+  background: var(--orange);
+}
+
+/* ------------------------------------------------------------ arrangement B (even weeks) */
+
+.s-i { left: .19cqw; top: .19cqw; width: 50.58cqw; height: 66.22cqw; border-radius: 18.53cqw 0 0 0; }
+.s-j {
+  left: 52.12cqw; top: 0; width: 47.88cqw; height: 66.41cqw;
+  border-radius: 3.28cqw 0 0 0;
+  /* the round picture below bites a curve out of the bottom, leaving an 8 pixel gap */
+  -webkit-mask: radial-gradient(circle at 23.94cqw 76.06cqw, transparent 25.29cqw, #000 calc(25.29cqw + .5px));
+          mask: radial-gradient(circle at 23.94cqw 76.06cqw, transparent 25.29cqw, #000 calc(25.29cqw + .5px));
+}
+.s-k { left: 52.32cqw; top: 52.32cqw; width: 47.68cqw; height: 47.68cqw; border-radius: 50%; }
+.s-l { left: 0; top: 68.15cqw; width: 50.77cqw; height: 31.85cqw; border-radius: 0 0 9.85cqw 0; }
+/* teal card: a large round top right corner, and a tail down its right side that wraps
+   around the round top right corner of the picture below, 9 pixels away from it */
+.s-m {
+  left: 0; top: 0; width: 58.3cqw; height: 36.1cqw; border-radius: 0;
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 302 187' preserveAspectRatio='none'%3E%3Cpath d='M0 0 H200 A102 102 0 0 1 302 102 V186.6 A111 111 0 0 0 199 117 H0 Z'/%3E%3C/svg%3E") 0 0 / 100% 100% no-repeat;
+          mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 302 187' preserveAspectRatio='none'%3E%3Cpath d='M0 0 H200 A102 102 0 0 1 302 102 V186.6 A111 111 0 0 0 199 117 H0 Z'/%3E%3C/svg%3E") 0 0 / 100% 100% no-repeat;
+}
+.s-n { left: 59.07cqw; top: 0; width: 40.35cqw; height: 40.35cqw; border-radius: 50%; }
+.s-o { left: 0; top: 24.32cqw; width: 58.3cqw; height: 75.48cqw; border-radius: 0 19.69cqw 0 19.69cqw; }
+/* pink card: a half circle on top, square at the bottom */
+.s-p {
+  left: 59.65cqw; top: 41.7cqw; width: 40.35cqw; height: 58.3cqw;
+  border-radius: 20.17cqw 20.17cqw 0 0;
+  background: var(--pink);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tint, .badge, .back-btn, .back-btn svg { transition: none; }
+}

@@ -1,0 +1,451 @@
+/* Crossing Persia, front cover */
+
+@property --write {
+  syntax: "<percentage>";
+  inherits: false;
+  initial-value: 106%;
+}
+
+@property --fill {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #a5391f;
+}
+
+@property --sweep {
+  syntax: "<angle>";
+  inherits: false;
+  initial-value: 360deg;
+}
+
+:root {
+  --bg: #0d0c0a;
+  --gap: clamp(8px, 0.75vw, 12px);
+  --r: clamp(18px, 1.9vw, 30px);
+  --rust: #a5391f;
+  --rust-deep: #8e2f18;
+  --stone: #c9c2b6;
+  --paper: #ebe8e2;
+  --ink: #161411;
+  --ink-soft: #3b3731;
+  --cream: #f6efe2;
+  --gold-1: #f5e6c4;
+  --gold-2: #dcbd82;
+  --gold-3: #b48848;
+  --ease: cubic-bezier(.22, .8, .2, 1);
+}
+
+* { box-sizing: border-box; }
+html, body { margin: 0; background: var(--bg); color: var(--cream); }
+body {
+  font-family: "Inter Tight", "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  overflow-x: hidden;
+}
+button { font: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; }
+a { color: inherit; }
+img { display: block; }
+
+/* ------------------------------------------------------------ layout */
+
+.cover {
+  display: grid;
+  grid-template-columns: 1fr 1.22fr 1.3fr;
+  gap: var(--gap);
+  padding: var(--gap);
+  height: 100vh;
+  height: 100dvh;
+  min-height: 680px;
+  position: relative;
+  z-index: 3;
+}
+.col { display: grid; gap: var(--gap); min-height: 0; min-width: 0; position: relative; }
+.col-left  { grid-template-rows: auto 1fr; z-index: 1; container-type: inline-size; --R: min(46cqw, 240px); }
+.col-mid {
+  display: block; z-index: 3; container-type: size;
+  --leg: clamp(12px, 1.4vw, 22px);
+  --D: min(calc(100cqw - 2 * (var(--leg) + var(--gap))), 52cqh, 680px);
+}
+.col-right { grid-template-rows: 1fr; z-index: 1; }
+
+.card {
+  position: relative;
+  border-radius: var(--r);
+  overflow: hidden;
+  min-height: 0;
+}
+
+/* ------------------------------------------------------------ type */
+
+h1, h2, h3 { margin: 0; font-weight: 600; letter-spacing: -.025em; }
+h1 { font-size: clamp(30px, 2.7vw, 46px); line-height: 1.02; margin-top: 14px; }
+
+/* ------------------------------------------------------------ keyboard focus */
+
+:focus-visible { outline: 2px solid var(--gold-2); outline-offset: 3px; }
+
+/* ------------------------------------------------------------ rust card */
+
+.card-rust {
+  background:
+    radial-gradient(120% 90% at 0% 0%, rgba(255,140,90,.16), transparent 55%),
+    var(--fill);
+  --fill: var(--rust);
+  color: #fff7ee;
+  justify-content: flex-end !important;
+  transition: --fill .35s var(--ease), color .35s;
+  padding: clamp(22px, 2.4vw, 36px);
+  min-height: clamp(230px, 29vh, 300px);
+  display: flex; flex-direction: column; justify-content: flex-start;
+  border-radius: var(--r) var(--r) 0 var(--r);
+  overflow: visible;
+  z-index: 2;
+}
+.rust-leg {
+  position: absolute; top: 100%; right: 0;
+  width: var(--R); height: calc(var(--R) + var(--gap));
+  background: radial-gradient(circle at 0 100%, transparent calc(var(--R) + var(--gap) - .5px), var(--fill) calc(var(--R) + var(--gap)));
+  pointer-events: none;
+}
+.card-rust:hover, .card-rust:focus-visible { --fill: var(--gold-2); color: var(--ink); }
+
+/* ------------------------------------------------------------ stone card */
+
+.card-stone {
+  position: absolute; top: 0; left: 0; right: 0;
+  height: calc(100cqh - var(--D) / 2);
+  background: linear-gradient(180deg, #d3ccc0, var(--stone) 60%);
+  color: var(--ink);
+  padding: clamp(22px, 3.6vh, 46px) 22px 0;
+  text-align: center;
+  padding-bottom: calc(var(--D) / 2 + var(--gap) + 16px);
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  -webkit-mask: radial-gradient(circle at 50% 100%, transparent calc(var(--D) / 2 + var(--gap)), #000 calc(var(--D) / 2 + var(--gap) + 1px));
+          mask: radial-gradient(circle at 50% 100%, transparent calc(var(--D) / 2 + var(--gap)), #000 calc(var(--D) / 2 + var(--gap) + 1px));
+}
+.stone-top { display: flex; flex-direction: column; align-items: center; position: relative; }
+.date {
+  margin-top: 12px;
+  font-size: clamp(28px, 2.6vw, 46px); line-height: 1.04; letter-spacing: -.03em;
+  max-width: 9.5em;
+}
+.card-stone h1 { margin: 0; font-size: clamp(38px, 3.6vw, 64px); line-height: 1; }
+.today, .journey, .where { margin: 0; font-size: clamp(20px, 1.6vw, 28px); line-height: 1.3; font-weight: 500; }
+.today { margin-top: clamp(16px, 2.4vh, 28px); }
+.today span { font-weight: 700; white-space: nowrap; }
+.journey { margin-top: 10px; max-width: 19em; }
+.journey .red { color: var(--rust-deep); font-weight: 700; white-space: nowrap; }
+.where { margin-top: 10px; max-width: 19em; }
+.where:empty, .journey[hidden] { display: none; }
+
+/* two versions of the same words in one spot; the script flickers between them */
+.swap-stack { display: inline-grid; vertical-align: baseline; }
+.swap-stack > span { grid-area: 1 / 1; }
+.swap-stack > .alt, .swap-stack.alt-on > .main { visibility: hidden; }
+.swap-stack.alt-on > .alt { visibility: visible; }
+/* a word and its cuneiform share one spot; in the big headings the cuneiform is drawn smaller so it fits */
+/* the English sets the spacing; the cuneiform is drawn centred over it and may run a little wider */
+.swap-stack[data-cun] { display: inline-block; position: relative; }
+.swap-stack[data-cun] > .alt { position: absolute; left: 50%; top: 50%; translate: -50% -50%; white-space: nowrap; font-size: .85em; }
+h1 .swap-stack[data-cun] > .alt, .panel-label .swap-stack[data-cun] > .alt { font-size: .55em; }
+.swap-stack.glitch { text-shadow: 2px 0 rgba(220, 189, 130, .75), -2px 0 rgba(165, 57, 31, .55); opacity: .88; }
+.dari { font-family: "Noto Nastaliq Urdu", "Segoe UI", serif; font-weight: 700; font-size: 1.45em; line-height: 1; letter-spacing: 0; justify-self: start; align-self: end; translate: 0 -.22em; color: var(--gold-1); text-shadow: 0 2px 14px rgba(0,0,0,.25); transition: color .35s; }
+.card-rust:hover .dari, .card-rust:focus-visible .dari { color: var(--ink); text-shadow: none; }
+.opers { font-family: "Noto Sans Old Persian", "Segoe UI Historic", sans-serif; font-weight: 400; letter-spacing: .06em; justify-self: center; }
+
+/* the tablet's own cuneiform, pressed faintly into the stone */
+.cuneiform-texture {
+  position: absolute; left: -8%; right: -8%; bottom: calc(var(--D) / 2 - 20px); height: 46%;
+  background: url(assets/cuneiform-ink.png) center bottom / cover no-repeat;
+  opacity: .045;
+  pointer-events: none;
+  -webkit-mask: linear-gradient(180deg, transparent 0%, #000 22%, #000 80%, transparent 100%);
+          mask: linear-gradient(180deg, transparent 0%, #000 22%, #000 80%, transparent 100%);
+}
+
+/* ------------------------------------------------------------ clickable panels */
+
+.panel { display: flex; flex-direction: column; text-decoration: none; color: inherit; cursor: pointer; }
+.panel-fill { position: absolute; inset: 0; }
+.panel-label {
+  margin: 0;
+  font-size: clamp(34px, 3.3vw, 60px);
+  line-height: 1; font-weight: 600; letter-spacing: -.03em;
+  transition: color .35s;
+}
+.photo-label {
+  position: absolute; left: 0; bottom: 0; z-index: 3;
+  padding: clamp(22px, 2.4vw, 38px);
+  text-shadow: 0 2px 18px rgba(0,0,0,.45);
+}
+.gold-wash {
+  position: absolute; inset: 0; z-index: 2; pointer-events: none;
+  background: linear-gradient(170deg, var(--gold-1), var(--gold-2) 55%, var(--gold-3));
+  mix-blend-mode: color;
+  opacity: 0; transition: opacity .35s;
+}
+.panel:hover .gold-wash, .panel:focus-visible .gold-wash { opacity: .95; }
+/* Substack sits higher, in the clear stone left of the lower block of gold writing.
+   The writing is placed in widths of the panel, so the label is too: its foot is 68% of the panel's width down. */
+.photo-darius > .panel-fill { container-type: size; }
+.substack-label { top: 68cqw; bottom: auto; translate: 0 -100%; }
+.panel:hover .photo-label, .panel:focus-visible .photo-label { color: var(--gold-1); }
+.panel:focus-visible { outline-offset: -4px; }
+
+/* ------------------------------------------------------------ photo cards */
+
+.card-photo { margin: 0; background: #1a2522; color: #fff; isolation: isolate; }
+.photo-fog { border-top-right-radius: var(--R); }
+.card-photo img {
+  position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover;
+  filter: saturate(.55) contrast(1.14) brightness(.98);
+  transform: scale(1.04);
+  transition: transform 1.6s var(--ease);
+}
+.card-photo .grade { position: absolute; inset: 0; pointer-events: none; }
+/* tone: multiply a cool green over the photograph, then darken where the words sit */
+.card-photo .grade::before, .card-photo .grade::after { content: ""; position: absolute; inset: 0; }
+.card-photo .grade::before { mix-blend-mode: multiply; }
+.photo-fog img { object-position: 34% 50%; }
+.photo-fog img { filter: saturate(.5) contrast(1.22) brightness(1.08); }
+.photo-fog .grade::before { background: linear-gradient(175deg, #6f9a93 0%, #8db3ab 48%, #557f78 100%); }
+.photo-fog .grade::after {
+  background:
+    radial-gradient(90% 60% at 50% 40%, rgba(255,255,255,.06), transparent 70%),
+    linear-gradient(0deg, rgba(7,15,14,.9) 0%, rgba(7,15,14,.5) 24%, rgba(7,15,14,0) 46%),
+    linear-gradient(180deg, rgba(7,15,14,.35) 0%, rgba(7,15,14,0) 30%);
+}
+/* the picture is enlarged so the face sits below the About the Project card */
+.photo-darius img { height: 165%; object-position: 50% 0; filter: saturate(.6) contrast(1.1) brightness(1.02); }
+.photo-darius .grade::before { background: linear-gradient(170deg, #9bb5ae 0%, #7f9f98 50%, #4c6a64 100%); }
+.photo-darius .grade::after {
+  background:
+    linear-gradient(180deg, rgba(7,15,14,.35) 0%, rgba(7,15,14,0) 22%),
+    linear-gradient(0deg, rgba(7,15,14,.94) 0%, rgba(7,15,14,.6) 28%, rgba(7,15,14,0) 55%);
+}
+
+/* fine line drawings over the photographs */
+.lineart { position: absolute; pointer-events: none; z-index: 1; fill: none; stroke: rgba(255,255,255,.82); stroke-width: .7; vector-effect: non-scaling-stroke; }
+.lineart * { vector-effect: non-scaling-stroke; }
+.lineart .fill { fill: rgba(255,255,255,.9); stroke: none; }
+
+.lineart-rosette { width: min(50%, 270px); aspect-ratio: 1; right: 9%; top: 11%; }
+
+/* the tablet's writing, in gold, over the cliff */
+.tablet-gold {
+  position: absolute; inset: 0; z-index: 1; pointer-events: none; overflow: hidden;
+  container-type: inline-size;
+  opacity: .8;
+  mix-blend-mode: screen;
+  filter: drop-shadow(0 0 3px rgba(240, 196, 120, .45)) drop-shadow(0 1px 0 rgba(0,0,0,.6));
+}
+/* one strip per line of writing; the script reveals each strip left to right, sign by sign */
+.type-line {
+  position: absolute; left: 0; width: 100cqw;
+  background: url(assets/tablet-text-gold.png) no-repeat;
+  background-size: 100cqw auto;
+}
+
+/* ------------------------------------------------------------ notch card (top right) */
+
+/* The paper card is its own piece of the board. Its corner is cut out of the Darius photograph
+   (cover.js sets the cut), so the gap around it is a real gap, the same as between the other pieces. */
+.notch {
+  position: absolute; top: 0; right: 0; z-index: 3;
+  width: min(60%, 420px);
+  padding: 0 0 var(--gap) var(--gap);
+}
+.photo-darius { background: transparent; }
+.card-paper {
+  background: var(--paper); color: var(--ink);
+  padding: clamp(22px, 2.2vw, 34px);
+  min-height: clamp(150px, 20vh, 220px);
+  justify-content: flex-end;
+  transition: background-color .35s;
+}
+.card-paper:hover, .card-paper:focus-visible { background: var(--gold-2); }
+
+.card-paper h3 { margin-top: 10px; font-size: clamp(21px, 1.75vw, 31px); line-height: 1.05; }
+
+/* ------------------------------------------------------------ the disk */
+
+.disk {
+  position: absolute; left: 50%; bottom: 0;
+  width: var(--D);
+  aspect-ratio: 1;
+  translate: -50% 0;
+  border-radius: 50%;
+  cursor: pointer;
+  outline-offset: 6px;
+}
+.disk-body {
+  position: absolute; inset: 0; border-radius: 50%;
+  background: #1b1714;
+  box-shadow: inset 0 0 0 1px rgba(246,226,186,.10);
+  transform: rotate(var(--turn, 0deg));
+  transition: transform .8s var(--ease);
+  overflow: hidden;
+}
+/* clay grain */
+.disk-body::after {
+  content: ""; position: absolute; inset: 0; border-radius: 50%; pointer-events: none;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='220' height='220'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1  0 0 0 0 .92  0 0 0 0 .8  0 0 0 .55 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+  opacity: .11; mix-blend-mode: overlay;
+}
+.disk-dots, .disk-lines {
+  position: absolute; inset: 0;
+  background: center / 100% 100% no-repeat;
+}
+.disk-dots { background-image: url(assets/disk-grain.png); opacity: .36; }
+.disk-ink {
+  position: absolute; inset: 0;
+  -webkit-mask: conic-gradient(from 0deg, #000 var(--sweep), transparent calc(var(--sweep) + .5deg));
+          mask: conic-gradient(from 0deg, #000 var(--sweep), transparent calc(var(--sweep) + .5deg));
+}
+.disk-lines { background-image: url(assets/disk-ink.png); }
+.disk-glint {
+  display: none;
+  position: absolute; inset: 0; border-radius: 50%; pointer-events: none; opacity: 0;
+  background: conic-gradient(from calc(var(--sweep) - 26deg), transparent 0deg, rgba(255,232,190,.0) 4deg, rgba(255,232,190,.16) 24deg, rgba(255,240,210,.5) 26deg, transparent 26.5deg);
+  mix-blend-mode: screen;
+}
+.disk-ring {
+  position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none;
+  fill: none; stroke: rgba(236, 210, 160, .32); stroke-width: .9;
+  stroke-dasharray: .22 2.78;
+  animation: spin 240s linear infinite;
+}
+@keyframes spin { to { rotate: 360deg; } }
+
+/* places on the tablet */
+.spots { position: absolute; inset: 0; }
+.spot {
+  position: absolute; width: 0; height: 0;
+}
+.spot i {
+  position: absolute; left: -15px; top: -15px; width: 30px; height: 30px; border-radius: 50%;
+  display: block; cursor: help;
+}
+.spot i::before {
+  content: ""; position: absolute; left: 50%; top: 50%; width: 5px; height: 5px; margin: -2.5px 0 0 -2.5px;
+  border-radius: 50%; background: var(--gold-1);
+  box-shadow: 0 0 0 0 rgba(245,230,196,.5);
+  opacity: 0; transition: opacity .3s, transform .3s var(--ease);
+}
+.spot i::after {
+  content: ""; position: absolute; left: 50%; top: 50%; width: 22px; height: 22px; margin: -11px 0 0 -11px;
+  border-radius: 50%; border: 1px solid rgba(245,230,196,.7);
+  opacity: 0; transform: scale(.4); transition: opacity .3s, transform .45s var(--ease);
+}
+.spot b {
+  position: absolute; left: 14px; top: -13px;
+  padding: 3px 8px 3px;
+  border-radius: 999px;
+  background: rgba(246,239,226,.94); color: var(--ink);
+  font-size: 15px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; white-space: nowrap;
+  opacity: 0; transform: translateX(-4px); transition: opacity .25s, transform .35s var(--ease), rotate .8s var(--ease);
+  rotate: calc(-1 * var(--turn, 0deg));
+  pointer-events: none;
+}
+.disk.peek .disk-body { --turn: -32deg; }
+.spot.left b { left: auto; right: 14px; transform: translateX(4px); }
+.spot.susa b { background: var(--rust); color: #fff; }
+.spot.up b { left: 0; top: -40px; translate: -50% 0; transform: translateY(4px); }
+.disk:hover .spot i::before { opacity: .9; }
+.spot.active i::before { opacity: 1; transform: scale(1.5); }
+.spot.active i::after { opacity: 1; transform: scale(1); }
+.spot.active b { opacity: 1; transform: none; }
+
+/* the centre prompt, shown on hover away from the places */
+
+/* ------------------------------------------------------------ intro */
+
+.rise { transition: opacity .9s var(--ease) calc(var(--i, 0) * 80ms + 80ms), transform 1.1s var(--ease) calc(var(--i, 0) * 80ms + 80ms); }
+.card-paper.rise, .card-rust.rise, .photo-fog.rise { transition: opacity .9s var(--ease) calc(var(--i, 0) * 80ms + 80ms), transform 1.1s var(--ease) calc(var(--i, 0) * 80ms + 80ms),
+  background-color .35s, scale .35s cubic-bezier(.22, .8, .2, 1), box-shadow .35s, --fill .35s var(--ease), color .35s; }
+.disk { transition: opacity 1.2s var(--ease) .15s, scale 1.6s var(--ease) .15s; }
+/* coming back from the maps page: the pieces are already in place, so they skip the fade-in */
+.cover.instant .rise, .cover.instant .disk { transition: none !important; }
+
+/* ------------------------------------------------------------ opening */
+
+.map-frame {
+  position: fixed; inset: 0; width: 100%; height: 100%; border: 0; z-index: 1;
+  background: var(--bg);
+  opacity: 0; pointer-events: none;
+}
+body.map-open .map-frame { opacity: 1; pointer-events: auto; z-index: 5; }
+body.map-open .cover { visibility: hidden; }
+/* coming back from maps.html: the cover paints once behind the maps frame, so it does not stall when it closes */
+body.map-open.returning .cover { visibility: visible; }
+body.map-open { overflow: hidden; }
+
+.veil { position: fixed; inset: 0; z-index: 2; background: var(--bg); pointer-events: none; }
+body.map-open .veil { opacity: 0; }
+
+/* the tablet glows a little brighter as it turns */
+.disk-ink { transition: filter .5s ease; }
+.disk.turning .disk-ink { filter: drop-shadow(0 0 9px rgba(240, 200, 130, .6)); }
+
+/* ------------------------------------------------------------ smaller screens */
+
+@media (max-width: 1100px) {
+  .cover { grid-template-columns: 1fr 1.1fr; grid-template-rows: auto 1fr; height: auto; min-height: 100dvh; }
+  .col-left { grid-column: 1; grid-row: 1 / span 2; }
+  .col-mid { grid-column: 2; grid-row: 1 / span 2; display: flex; flex-direction: column; gap: var(--gap); container-type: normal; }
+  .col-right { grid-column: 1 / -1; grid-row: 3; min-height: 640px; }
+  .rust-leg { display: none; }
+  .card-rust { border-radius: var(--r); }
+  .photo-fog { border-top-right-radius: var(--r); min-height: 460px; }
+  .card-stone { position: relative; height: auto; padding-bottom: 32px; -webkit-mask: none; mask: none; gap: 22px; }
+  
+  .cuneiform-texture { bottom: -10%; }
+  .disk { position: relative; left: auto; bottom: auto; translate: none; width: min(100%, 520px); align-self: center; margin: 4px 0; }
+  /* the About the Project card sits above the Darius picture instead of over its corner */
+  .col-right { grid-template-rows: auto 1fr; }
+  .notch { position: static; width: 100%; padding: 0; grid-row: 1; }
+  .photo-darius { grid-row: 2; }
+  .photo-darius { min-height: 560px; }
+  .photo-darius > .panel-fill { border-radius: var(--r); overflow: hidden; }
+  .photo-darius img { height: 100%; object-position: 60% 25%; }
+  .card-paper { border-radius: var(--r); min-height: 0; }
+}
+
+/* ------------------------------------------------------------ phones
+   The title card first, with the disk biting into its bottom edge as on the desktop;
+   then Travel Journal, then Maps and Substack side by side as two photo tiles, then About the Project. */
+@media (max-width: 720px) {
+  :root { --gap: 8px; --r: 22px; }
+  .cover { display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: none; height: auto; min-height: 0; padding: var(--gap); --Dm: min(84vw, 360px); }
+  .col { display: contents; }
+  .notch, .photo-darius { grid-row: auto; }   /* the tablet layout above pins these two to rows of their own */
+
+  .card-stone { order: 0; grid-column: 1 / -1; padding: 30px 20px calc(var(--Dm) / 2 + var(--gap) + 20px); gap: 0;
+    -webkit-mask: radial-gradient(circle at 50% 100%, transparent calc(var(--Dm) / 2 + var(--gap)), #000 calc(var(--Dm) / 2 + var(--gap) + 1px));
+            mask: radial-gradient(circle at 50% 100%, transparent calc(var(--Dm) / 2 + var(--gap)), #000 calc(var(--Dm) / 2 + var(--gap) + 1px)); }
+  .card-stone h1 { font-size: clamp(34px, 10vw, 44px); margin-top: 0; }
+  .today, .journey, .where { font-size: clamp(16px, 4.6vw, 19px); }
+  .today { margin-top: 14px; }
+  .journey, .where { margin-top: 6px; }
+  .cuneiform-texture { bottom: 0; }
+  .disk { order: 1; grid-column: 1 / -1; width: var(--Dm); margin: calc(var(--Dm) / -2 - var(--gap)) 0 0; justify-self: center; z-index: 4; }
+
+  .card-rust { order: 2; grid-column: 1 / -1; min-height: 112px; padding: 22px; }
+  .photo-fog { order: 3; grid-column: 1; min-height: 0; aspect-ratio: 4 / 5; border-radius: var(--r); }
+  .photo-darius { order: 4; grid-column: 2; min-height: 0; aspect-ratio: 4 / 5; }
+  .notch { order: 5; grid-column: 1 / -1; }
+  .card-paper { border-radius: var(--r); min-height: 96px; padding: 22px; }
+
+  .panel-label { font-size: clamp(28px, 8vw, 34px); }
+  .photo-label { padding: 18px; }
+  .substack-label { top: auto; bottom: 0; translate: none; }
+  .lineart-rosette { width: 66%; right: 17%; top: 12%; }
+  .photo-fog img { object-position: 30% 50%; }
+  .photo-darius img { height: 100%; transform: scale(1.7); transform-origin: 60% 24%; }
+  .spot b { font-size: 14px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; transition-delay: 0ms !important; }
+}

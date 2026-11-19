@@ -1,0 +1,383 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="dark">
+<title>Crossing Persia: Map Sources</title>
+<meta name="description" content="Every source used to draw the Crossing Persia route map.">
+<!-- the tab icon: the Old Persian sign pa, first sign of Parsa (Persia), white on dark blue -->
+<link rel="icon" href="favicon.ico" sizes="any">
+<link rel="icon" href="assets/icon-512.png" type="image/png">
+<link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+<!-- the preview card when a link is shared on Facebook, WhatsApp, X and others -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Crossing Persia">
+<meta property="og:title" content="Crossing Persia: Map Sources">
+<meta property="og:description" content="Every source used to draw the Crossing Persia route map.">
+<meta property="og:url" content="https://www.crossingpersia.com/map-sources.html">
+<meta property="og:image" content="https://www.crossingpersia.com/assets/share.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Crossing Persia: a real-time Travel Journal in 500 BCE, over the carved face of Darius with gold cuneiform">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700&family=Marcellus&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0d0c0a;
+    --stone: #c9c2b6;
+    --ink: #161411;
+    --ink-soft: #3b3731;
+    --rust-deep: #8e2f18;
+    --cream: #f7efe2;
+    --gap: clamp(8px, 0.75vw, 12px);
+    --r: clamp(18px, 1.9vw, 30px);
+    --pad: clamp(22px, 2.6vw, 40px);
+    /* the picture circle: as tall as the screen, but never more than half its width */
+    --D: min(calc(100svh - 2 * var(--gap)), 50vw);
+    --ring: clamp(10px, 1.1vw, 16px);
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; height: 100%; background: var(--bg); }
+  body {
+    font-family: "Inter Tight", "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+    -webkit-font-smoothing: antialiased; color: var(--ink);
+  }
+  button { font: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; }
+  :focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; }
+
+  .stage { position: fixed; inset: 0; padding: var(--gap); }
+
+  /* the stone card runs under the circle as far as the circle's middle */
+  .card {
+    position: absolute; top: var(--gap); bottom: var(--gap); left: var(--gap);
+    right: calc(var(--gap) + var(--D) / 2);
+    border-radius: var(--r); background: var(--stone);
+    padding: var(--pad);
+    padding-right: calc(var(--D) / 2 + var(--ring) + var(--pad));
+    display: flex; flex-direction: column; min-height: 0;
+  }
+
+  h1 {
+    margin: 0;
+    font-family: "Marcellus", Georgia, serif; font-weight: 400; text-transform: uppercase;
+    font-size: clamp(34px, 3.6vw, 64px); line-height: 1; letter-spacing: .01em;
+  }
+  h1 { white-space: nowrap; }
+  h1 .category { font-size: .75em; }
+
+  /* the text box and its slider */
+  .reader {
+    flex: 1; min-height: 0; margin: clamp(18px, 3vh, 32px) 0;
+    display: grid; grid-template-columns: minmax(0, 68ch) 22px; justify-content: start;
+    gap: clamp(14px, 1.6vw, 26px);
+  }
+  .text {
+    overflow-y: auto; scrollbar-width: none; overscroll-behavior: contain;
+    font-size: 15px; line-height: 1.6; color: var(--ink-soft);
+  }
+  .text::-webkit-scrollbar { display: none; }
+  .text section[hidden] { display: none; }
+  .text p { margin: 0 0 10px; }
+  .text ul { margin: 0 0 10px; padding-left: 18px; }
+  .text li { margin: 0 0 8px; }
+  .text h3 {
+    font-size: 11px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase;
+    color: var(--ink); margin: 20px 0 6px;
+  }
+  .text h3:first-child { margin-top: 0; }
+  .text b, .text .ref { color: var(--ink); }
+  .text cite { font-style: italic; }
+  .text a { color: var(--rust-deep); text-underline-offset: 2px; }
+  .text a:hover { color: var(--ink); }
+
+  /* the vertical slider: a thin line with a ring handle that has a dot in the middle */
+  .slider { position: relative; cursor: pointer; touch-action: none; }
+  .slider[hidden] { display: none; }
+  .slider-track {
+    position: absolute; left: 50%; top: 10px; bottom: 10px; width: 3px; margin-left: -1.5px;
+    border-radius: 3px; background: rgba(22,20,17,.22);
+  }
+  .slider-fill {
+    position: absolute; left: 0; top: 0; width: 100%; height: var(--p, 0%);
+    border-radius: 3px; background: var(--ink);
+  }
+  .slider-thumb {
+    position: absolute; left: 50%; top: var(--p, 0%);
+    width: 20px; height: 20px; margin: -10px 0 0 -10px; border-radius: 50%;
+    border: 2px solid var(--ink);
+    background: radial-gradient(circle, var(--ink) 0 3.5px, var(--stone) 4.5px);
+  }
+  .slider:focus-visible { outline-offset: 2px; border-radius: 12px; }
+
+  /* one button for each source; the chosen one is the dark pill */
+  .tabs { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; padding: 4px; }
+  .tab {
+    height: 44px; padding: 0 24px; border-radius: 999px;
+    background: var(--cream); color: var(--rust-deep);
+    font-size: 13px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; white-space: nowrap;
+    transition: box-shadow .2s, background-color .2s;
+  }
+  .tab:hover { background: #fff8ec; }
+  .tab[aria-selected="true"] { box-shadow: 0 0 0 3px var(--stone), 0 0 0 5px var(--rust-deep); }
+
+  /* the round Babylonian map, in a dark ring that bites into the card */
+  .disc {
+    position: absolute; right: var(--gap); top: 50%;
+    width: var(--D); aspect-ratio: 1; margin-top: calc(var(--D) / -2);
+    border-radius: 50%; overflow: hidden;
+    box-shadow: 0 0 0 var(--ring) var(--bg);
+    background: #2a2622;
+  }
+  .disc img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+  /* labels on the tablet: each carved label has its own hover area, drawn over the signs themselves */
+  .spots { position: absolute; inset: 0; }
+  .area {
+    position: absolute; border-radius: 12px; cursor: help;
+    box-shadow: inset 0 0 0 1px rgba(247,239,226,0);
+    transition: box-shadow .25s, background-color .25s;
+  }
+  .area.round { border-radius: 50%; }
+  .disc:hover .area { box-shadow: inset 0 0 0 1px rgba(247,239,226,.28); }
+  .disc .area.on { box-shadow: inset 0 0 0 2px rgba(247,239,226,.95), 0 0 18px rgba(247,239,226,.35); background-color: rgba(247,239,226,.10); }
+  .tag {
+    position: absolute; z-index: 1; max-width: 70%;
+    padding: 5px 11px 6px; border-radius: 14px;
+    background: rgba(246,239,226,.96); color: var(--ink); text-align: center;
+    opacity: 0; transition: opacity .2s; pointer-events: none;
+  }
+  .tag.on { opacity: 1; }
+  .tag b { display: block; font-size: 15px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; white-space: nowrap; }
+  .tag i { display: block; font-size: 13px; color: var(--ink-soft); }
+  .tag span { display: block; font-size: 12.5px; line-height: 1.35; color: var(--ink-soft); }
+
+  @media (max-width: 760px) {
+    :root { --D: min(78vw, 360px); }
+    html, body { height: auto; }
+    .stage { position: static; display: flex; flex-direction: column; align-items: center; padding-top: calc(var(--gap) + var(--ring)); }
+    .disc { position: relative; right: auto; top: auto; margin: 0; z-index: 1; order: -1; flex: none; }
+    .card {
+      position: relative; inset: auto; width: 100%;
+      right: auto; left: auto; top: auto; bottom: auto;
+      margin-top: calc(var(--D) / -2); padding: calc(var(--D) / 2 + var(--ring) + 20px) 20px 22px;
+      height: auto;
+    }
+    .reader { flex: none; }
+    .text { max-height: 58svh; }
+  }
+</style>
+</head>
+<body>
+<main class="stage">
+
+  <div class="card">
+    <h1>Map Sources</h1>
+
+    <div class="reader">
+      <div class="text" id="text" tabindex="0">
+
+        <section id="src-background" aria-labelledby="tab-background">
+          <ul>
+            <li><a href="https://openfreemap.org" target="_blank" rel="noopener">OpenFreeMap</a>.</li>
+            <li><a href="https://openmaptiles.org" target="_blank" rel="noopener">OpenMapTiles</a>.</li>
+            <li><a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">&copy; OpenStreetMap contributors</a>.</li>
+            <li><a href="https://maplibre.org" target="_blank" rel="noopener">MapLibre</a>.</li>
+            <li><a href="https://pleiades.stoa.org" target="_blank" rel="noopener">Pleiades</a>, places file and names file, from <a href="https://atlantides.org/downloads/pleiades/dumps/" target="_blank" rel="noopener">atlantides.org/downloads/pleiades/dumps</a>.</li>
+          </ul>
+        </section>
+
+        <section id="src-political" aria-labelledby="tab-political" hidden>
+          <ul>
+            <li>Sylvian Fachard, 2016, &ldquo;Modelling the Territories of Attic Demes: A Computational Approach&rdquo;, in John Bintliff and N. Keith Rutter (eds), <cite>The Archaeology of Greece and Rome: Studies in Honour of Anthony Snodgrass</cite>, pp. 192&ndash;222, Edinburgh University Press. <a href="https://doi.org/10.3366/edinburgh/9781474417099.003.0009" target="_blank" rel="noopener">doi:10.3366/edinburgh/9781474417099.003.0009</a>.</li>
+            <li>Jos&eacute; Pascual, 2005, &ldquo;HERAKLES PROJECT: Classical Boiotia through the GIS&rdquo;, extended illustrated version of a paper in <cite>Teiresias</cite> 35, part 1. <a href="https://www.icca.eu/wp-content/uploads/2017/04/Herakles_Project.pdf" target="_blank" rel="noopener">PDF</a>.</li>
+            <li>John L. Bintliff, 1999, &ldquo;The Origins and Nature of the Greek City-State and its Significance for World Settlement History&rdquo;, in <cite>Les princes de la protohistoire et l&rsquo;&eacute;mergence de l&rsquo;&Eacute;tat</cite>, pp. 43&ndash;56, Publications de l&rsquo;&Eacute;cole fran&ccedil;aise de Rome 252. <a href="https://www.persee.fr/doc/efr_0223-5099_1999_act_252_1_6004" target="_blank" rel="noopener">Pers&eacute;e</a>.</li>
+            <li>Emeri Farinetti, 2008, &ldquo;Fluctuating Landscapes: The Case of the Copais Basin in Ancient Boeotia&rdquo;, <cite>Annuario della Scuola Archeologica di Atene e delle Missioni Italiane in Oriente</cite> 86 (series III, 8), pp. 115&ndash;138.</li>
+            <li>Hans Beck, 2023, &ldquo;Making Landscapes, Building Communities. A Journey along the Kopais Corridor in Boiotia&rdquo;, <cite>Klio</cite> 105.1, pp. 51&ndash;84. <a href="https://doi.org/10.1515/klio-2021-0056" target="_blank" rel="noopener">doi:10.1515/klio-2021-0056</a>.</li>
+            <li>Herodotus, <cite>Histories</cite>, the Landmark edition, edited by Robert B. Strassler.</li>
+            <li>Mogens Herman Hansen and Thomas Heine Nielsen, 2004, <cite>An Inventory of Archaic and Classical Poleis</cite>, through Stanford's POLIS table: <a href="https://polis.stanford.edu/data/master_data_11_19_2013.csv" target="_blank" rel="noopener">polis.stanford.edu/data/master_data_11_19_2013.csv</a>.</li>
+            <li>Cliopatria v0.21, Seshat Global History Databank, CC&nbsp;BY&nbsp;4.0. <a href="https://doi.org/10.1038/s41597-025-04516-9" target="_blank" rel="noopener">doi:10.1038/s41597-025-04516-9</a>.</li>
+            <li>Bibi Saint-Pol, <a href="https://commons.wikimedia.org/wiki/File:Map_Greco-Persian_Wars-en.svg" target="_blank" rel="noopener"><cite>Map Greco-Persian Wars-en.svg</cite></a>, Wikimedia Commons, CC&nbsp;BY-SA, after the dtv-Atlas Weltgeschichte, p. 56.</li>
+            <li>Wikipedia, <a href="https://en.wikipedia.org/w/index.php?oldid=1383564739" target="_blank" rel="noopener"><cite>Salamis Island</cite>, revision 1383564739</a>.</li>
+            <li>Wikipedia, <a href="https://en.wikipedia.org/w/index.php?oldid=1382102622" target="_blank" rel="noopener"><cite>Macedonia (ancient kingdom)</cite>, revision 1382102622</a>.</li>
+            <li>Wikipedia, <a href="https://en.wikipedia.org/w/index.php?oldid=1381018100" target="_blank" rel="noopener"><cite>Eleutherae</cite>, revision 1381018100</a>.</li>
+            <li>Wikipedia, <a href="https://en.wikipedia.org/w/index.php?oldid=1384646814" target="_blank" rel="noopener"><cite>Boeotia</cite>, revision 1384646814</a>.</li>
+            <li>Wikipedia, <a href="https://en.wikipedia.org/w/index.php?oldid=1373653541" target="_blank" rel="noopener"><cite>Messenia (ancient region)</cite>, revision 1373653541</a>.</li>
+            <li>Wikipedia, <a href="https://en.wikipedia.org/w/index.php?oldid=1375871483" target="_blank" rel="noopener"><cite>Pisa, Greece</cite>, revision 1375871483</a>.</li>
+            <li>Wikipedia, <cite>Achaean League</cite>.</li>
+            <li><a href="https://www.openstreetmap.org/way/19275777" target="_blank" rel="noopener">OpenStreetMap, way 19275777</a>, the River Asopos.</li>
+            <li><a href="https://registry.opendata.aws/terrain-tiles/" target="_blank" rel="noopener">Mapzen terrain tiles</a>, Amazon open data.</li>
+            <li><a href="https://pleiades.stoa.org" target="_blank" rel="noopener">Pleiades</a>.</li>
+            <li><a href="https://www.wikidata.org" target="_blank" rel="noopener">Wikidata</a>.</li>
+          </ul>
+        </section>
+
+        <section id="src-geography" aria-labelledby="tab-geography" hidden>
+          <ul>
+            <li><a href="https://registry.opendata.aws/terrain-tiles/" target="_blank" rel="noopener">Mapzen terrain tiles</a>, Amazon open data.</li>
+            <li><a href="https://pleiades.stoa.org" target="_blank" rel="noopener">Pleiades</a>.</li>
+          </ul>
+        </section>
+
+        <section id="src-route" aria-labelledby="tab-route" hidden>
+          <ul>
+            <li><a href="https://pleiades.stoa.org" target="_blank" rel="noopener">Pleiades</a>.</li>
+            <li><a href="https://routing.openstreetmap.de" target="_blank" rel="noopener">routing.openstreetmap.de</a>, 17 November 2026.</li>
+          </ul>
+        </section>
+
+      </div>
+
+      <div class="slider" id="slider" role="scrollbar" aria-controls="text" aria-orientation="vertical"
+           aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-label="Scroll the sources" tabindex="0">
+        <div class="slider-track"><div class="slider-fill"></div><div class="slider-thumb"></div></div>
+      </div>
+    </div>
+
+    <div class="tabs" role="tablist" aria-label="Sources">
+      <button type="button" class="tab" role="tab" id="tab-background" aria-controls="src-background" aria-selected="true">Background Map</button>
+      <button type="button" class="tab" role="tab" id="tab-political" aria-controls="src-political" aria-selected="false">Political</button>
+      <button type="button" class="tab" role="tab" id="tab-geography" aria-controls="src-geography" aria-selected="false">Geography</button>
+      <button type="button" class="tab" role="tab" id="tab-route" aria-controls="src-route" aria-selected="false">Route</button>
+    </div>
+  </div>
+
+  <div class="disc">
+    <img src="assets/babylonian-map.jpg" alt="The Babylonian Map of the World, a clay tablet with the world drawn as a circle" decoding="async">
+    <div class="spots" id="spots"></div>
+  </div>
+
+</main>
+
+<script>
+(() => {
+  const text = document.getElementById('text');
+  const slider = document.getElementById('slider');
+  const track = slider.querySelector('.slider-track');
+  const tabs = [...document.querySelectorAll('.tab')];
+
+  // the slider follows the text, and hides when the text fits without scrolling
+  function sync() {
+    const max = text.scrollHeight - text.clientHeight;
+    slider.hidden = max <= 1;
+    const p = max > 0 ? text.scrollTop / max : 0;
+    slider.style.setProperty('--p', (p * 100) + '%');
+    slider.setAttribute('aria-valuenow', Math.round(p * 100));
+  }
+  text.addEventListener('scroll', sync, { passive: true });
+  window.addEventListener('resize', sync);
+  if (document.fonts) document.fonts.ready.then(sync);
+
+  // dragging or clicking the slider scrolls the text
+  function scrollTo(clientY) {
+    const r = track.getBoundingClientRect();
+    const p = Math.min(1, Math.max(0, (clientY - r.top) / r.height));
+    text.scrollTop = p * (text.scrollHeight - text.clientHeight);
+  }
+  slider.addEventListener('pointerdown', e => {
+    slider.setPointerCapture(e.pointerId);
+    scrollTo(e.clientY);
+    const move = ev => scrollTo(ev.clientY);
+    const up = () => { slider.removeEventListener('pointermove', move); slider.removeEventListener('pointerup', up); };
+    slider.addEventListener('pointermove', move);
+    slider.addEventListener('pointerup', up);
+  });
+  slider.addEventListener('keydown', e => {
+    const step = { ArrowDown: 60, ArrowUp: -60, PageDown: text.clientHeight, PageUp: -text.clientHeight }[e.key];
+    if (e.key === 'Home') text.scrollTop = 0;
+    else if (e.key === 'End') text.scrollTop = text.scrollHeight;
+    else if (step) text.scrollTop += step;
+    else return;
+    e.preventDefault();
+  });
+
+  // labels on the tablet photograph. Readings follow Wayne Horowitz, "The Babylonian Map of the World",
+  // Iraq 50 (1988), 147-165, as listed with his label numbers on the English Wikipedia page for the map.
+  // Each box is drawn over the carved signs: centre x, centre y, width, height in pixels of the
+  // 1100 pixel photograph, then the turn in degrees. Labels 15, 20, 21, 22 and 23-25 are off this photograph or have no writing.
+  const PLACES = [
+    { no: 1,  name: "Mountain",  ak: "šadû", note: "where the river begins", box: [640, 315, 170, 75, -3] },
+    { no: 2,  name: "City",      ak: "uru", note: "a city with no name", box: [770, 385, 95, 95, 0], round: true },
+    { no: 3,  name: "Urartu",    ak: "urašṭu", note: "the kingdom in the northern mountains", box: [825, 438, 130, 45, 10] },
+    { no: 4,  name: "Assyria",   ak: "aššur", note: "upriver, to the north", box: [853, 522, 100, 95, 0], round: true },
+    { no: 5,  name: "Der",       ak: "dēr", note: "a city on the border with Elam", box: [872, 742, 110, 105, 0], round: true },
+    { no: 6,  name: "Unread",    ak: "…-ra", note: "the first sign is broken, and the name has not been read", box: [768, 770, 70, 95, 30] },
+    { no: 7,  name: "Swamp",     ak: "appāru", note: "the marshes where the river ends", box: [675, 858, 170, 55, -5] },
+    { no: 8,  name: "Susa",      ak: "šušan", note: "later a capital of the Persian kings", box: [510, 958, 80, 75, 0], round: true },
+    { no: 9,  name: "Channel",   ak: "bitqu", note: "the outflow of the river", box: [400, 878, 220, 55, -3] },
+    { no: 10, name: "Bit Yakin", ak: "bīt-yakīn", note: "a Chaldean land by the southern marshes", box: [385, 783, 260, 60, 0] },
+    { no: 11, name: "City",      ak: "uru", note: "a city with no name", box: [282, 712, 95, 95, 0], round: true },
+    { no: 12, name: "Habban",    ak: "habban", note: "a Kassite land and city", box: [335, 440, 80, 90, 0] },
+    { no: 13, name: "Babylon",   ak: "tin.tir<sup>ki</sup>", note: "at the centre of the world", box: [645, 482, 110, 60, -3] },
+    { no: 14, name: "Ocean",     ak: "marratu", note: "the salt sea that rings the whole land", box: [140, 640, 90, 300, 8] },
+    { no: 16, name: "Ocean",     ak: "marratu", note: "the salt sea that rings the whole land", box: [1000, 790, 80, 270, -18] },
+    { no: 17, name: "Ocean",     ak: "marratu", note: "the salt sea that rings the whole land", box: [890, 300, 150, 80, 40] },
+    { no: 18, name: "Region",    ak: "nagû", note: "past the ocean, &ldquo;6 leagues in between, where the Sun is not seen&rdquo;", box: [825, 110, 70, 170, 0] },
+    { no: 19, name: "Region",    ak: "nagû", note: "past the ocean, &ldquo;6 leagues in between&rdquo;", box: [170, 150, 260, 150, 35] },
+  ];
+  const spots = document.getElementById('spots');
+  const pct = v => (v / 11) + '%';
+  for (const p of PLACES) {
+    const [cx, cy, w, h, turn] = p.box;
+    const area = document.createElement('span');
+    area.className = 'area' + (p.round ? ' round' : '');
+    Object.assign(area.style, { left: pct(cx - w / 2), top: pct(cy - h / 2), width: pct(w), height: pct(h), rotate: turn + 'deg' });
+
+    // the name sits just below the label, or just above it near the bottom of the disc
+    const a = turn * Math.PI / 180;
+    const half = (Math.abs(w * Math.sin(a)) + Math.abs(h * Math.cos(a))) / 2;
+    const below = cy < 780;
+    const tag = document.createElement('span');
+    tag.className = 'tag';
+    tag.innerHTML = `<b>${p.name}</b><i>${p.ak}</i><span>${p.note}</span>`;
+    tag.style.left = pct(Math.min(Math.max(cx, 260), 840));
+    tag.style.top = pct(below ? cy + half + 8 : cy - half - 8);
+    tag.style.transform = `translate(-50%, ${below ? '0' : '-100%'})`;
+
+    const on = v => { area.classList.toggle('on', v); tag.classList.toggle('on', v); };
+    area.addEventListener('pointerenter', () => on(true));
+    area.addEventListener('pointerleave', () => on(false));
+    spots.append(area, tag);
+  }
+
+  // shrink the title until it fits on one line
+  function fitTitle() {
+    const h1 = document.querySelector('h1');
+    h1.style.fontSize = '';
+    let size = parseFloat(getComputedStyle(h1).fontSize);
+    while (h1.scrollWidth > h1.clientWidth && size > 16) {
+      size -= 1;
+      h1.style.fontSize = size + 'px';
+    }
+  }
+  window.addEventListener('resize', fitTitle);
+  document.fonts.ready.then(fitTitle);
+
+  // one source shown at a time
+  function show(tab) {
+    tabs.forEach(t => {
+      const on = t === tab;
+      t.setAttribute('aria-selected', on);
+      document.getElementById(t.getAttribute('aria-controls')).hidden = !on;
+    });
+    const h1 = document.querySelector('h1');
+    h1.textContent = 'Map Sources: ';
+    const cat = document.createElement('span');
+    cat.className = 'category';
+    cat.textContent = tab.textContent;
+    h1.append(cat);
+    fitTitle();
+    text.scrollTop = 0;
+    history.replaceState(null, '', '#' + tab.id.slice(4));
+    sync();
+  }
+  tabs.forEach(t => t.addEventListener('click', () => show(t)));
+
+  const start = tabs.find(t => '#' + t.id.slice(4) === location.hash);
+  show(start || tabs[0]);
+})();
+</script>
+</body>
+</html>

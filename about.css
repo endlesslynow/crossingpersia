@@ -1,0 +1,274 @@
+/* Crossing Persia, the About the Project page.
+   The page copies the cover of a Persian printed book: a lithograph of a winged rider on a donkey,
+   standing on a double-ruled box. The box is the book's own printed box, cut from the same scan,
+   and stretched downwards so it holds the whole text.
+
+   Measuring unit: the scan of the book cover is 476 pixels wide, and --px is one of those pixels
+   at the size the drawing is shown. Every measurement of the box below is in those pixels. */
+
+:root {
+  --bg: #0d0c0a;
+  --gap: clamp(8px, 0.75vw, 12px);
+  --r: clamp(18px, 1.9vw, 30px);
+  --rust: #a5391f;
+  --paper: #ebe8e2;          /* the same colour as the About the Project card on the cover */
+  --ink: #000;
+  --ink-soft: #3b3731;
+  --cream: #f6efe2;
+  --gold-2: #dcbd82;
+  --ease: cubic-bezier(.22, .8, .2, 1);
+}
+
+* { box-sizing: border-box; }
+html, body { margin: 0; background: var(--bg); color: var(--cream); }
+body {
+  font-family: "Inter Tight", "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+img { display: block; }
+:focus-visible { outline: 2px solid var(--gold-2); outline-offset: 3px; }
+
+/* ------------------------------------------------------------ the paper card */
+
+.about {
+  width: min(100%, 980px); margin: 0 auto;
+  padding: 0 16px;            /* the sheet runs from the very top of the page to the very bottom */
+}
+.plate {
+  background: var(--paper); color: var(--ink);
+  border-radius: var(--r);
+  padding: clamp(32px, 6vw, 80px) clamp(16px, 4vw, 48px) clamp(40px, 6vw, 88px);
+  overflow: hidden;            /* on phones the wing tips run past the card and are trimmed */
+}
+.plate-inner { width: min(100%, 800px); margin: 0 auto; container-type: inline-size; }
+
+/* The drawing runs down to pixel 232 of the scan. The box's top lines start at pixel 226,
+   so the box is pulled up 6 pixels and lies exactly over the same lines in the drawing. */
+.rider { width: 100%; height: auto; }
+
+/* The book's box, from the scan: from pixel 126 to pixel 423 across, its top line at pixel 226.
+   The box picture is the empty box at three times the size of the scan.
+   Its edge strips are 12 pixels on the left, 10 on the right, 8 on top and 7 at the bottom.
+   The corners stay as printed; only the side strips stretch, so the box grows taller without changing its lines. */
+.frame {
+  --px: calc(100cqw / 476);
+  position: relative;
+  width: calc(297 * var(--px));
+  margin: calc(-6 * var(--px)) 0 0 calc(126 * var(--px));
+  border-style: solid;
+  border-width: calc(8 * var(--px)) calc(10 * var(--px)) calc(7 * var(--px)) calc(12 * var(--px));
+  border-image: url("assets/winged-rider-box.png") 24 30 21 36 fill / calc(8 * var(--px)) calc(10 * var(--px)) calc(7 * var(--px)) calc(12 * var(--px)) stretch;
+  padding: calc(26 * var(--px)) calc(22 * var(--px)) calc(26 * var(--px));
+}
+
+/* the red title, written in Persian like the book's own title */
+.title {
+  margin: calc(8 * var(--px)) 0 0;
+  color: var(--ink);
+  font-weight: 700; letter-spacing: -.03em;
+  font-size: calc(30 * var(--px)); line-height: 1.1;
+  text-align: center;
+}
+
+/* The ruled line under the title, copied from the line under the book's subtitle:
+   a 2-pixel rule runs from each side of the box to the words, and ends in a small black square beside them. */
+.ruled {
+  /* On the left the inner ruled line of the box sits 2 pixels outside the padding; on the right it sits right at the padding's edge. */
+  display: flex; align-items: center; gap: calc(4 * var(--px));
+  margin: calc(14 * var(--px)) calc(-23.3 * var(--px)) calc(22 * var(--px)) calc(-24.6 * var(--px)) !important;
+  font-size: calc(10.5 * var(--px)) !important; font-weight: 600 !important;
+  letter-spacing: .02em; line-height: 1 !important;
+  white-space: nowrap;
+}
+.ruled::before, .ruled::after {
+  content: ""; flex: 1; height: calc(2 * var(--px)); background: var(--ink);
+}
+.ruled > span { display: flex; align-items: center; gap: calc(5 * var(--px)); }
+.ruled > span::before, .ruled > span::after {
+  content: ""; width: calc(3.5 * var(--px)); height: calc(3.5 * var(--px)); background: var(--ink);
+  margin-left: calc(-4 * var(--px));
+}
+.ruled > span::after { margin-left: 0; margin-right: calc(-4 * var(--px)); }
+
+.frame p {
+  margin: 0 0 1.1em;
+  font-size: calc(10.4 * var(--px)); line-height: 1.6; font-weight: 400;
+}
+.frame p:last-child { margin-bottom: 0; }
+
+/* ------------------------------------------------------------ the picture slot inside the box */
+
+.pic { margin: calc(16 * var(--px)) 0 calc(18 * var(--px)); }
+/* the map, inside a thin ink line like the printed rules */
+.pic img { width: 100%; height: auto; outline: calc(1.5 * var(--px)) solid var(--ink); }
+
+/* ------------------------------------------------------------ page 2: the lithographed astronomy page */
+
+/* The cream cards join into one long sheet with no gaps and no rounded corners. */
+.about { display: flex; flex-direction: column; gap: 0; }
+.about > .plate { border-radius: 0; }
+/* card heights fall between whole pixels, so each card overlaps the one above by a pixel to hide the join */
+.about > .plate + .plate { margin-top: -1px; }
+/* only a small gap above the row of buttons at the very top */
+.about > .plate:first-child { padding-top: clamp(10px, 1.4vw, 18px); }
+
+/* Each lithographed page is a cream card standing for the whole book page in the photograph.
+   The frame sits on the card where it sits on the page, and leans as it does in the photograph,
+   measured from the corners of the frame's outer lines in each photograph (both photographs are 680 pixels wide).
+   The frame picture is the straightened frame at three times the size, with 6 blank pixels round it, and only the lines kept. */
+.litho-plate { padding: var(--top) 0 var(--bottom); }
+.litho-plate .page-inner {
+  width: var(--w); margin-left: var(--left);
+  container-type: inline-size;
+}
+/* On a computer, about.js bends each frame so its four corners land exactly where the frame's corners are in the photograph,
+   and sets the space below it. The numbers here place its top left corner. */
+
+/* Page 2, the astronomy page: the frame picture's top left corner is at pixel 164 across and 115 down in the 680-pixel-wide photograph. */
+.p2 { --w: 70.88%; --left: 24.12%; --top: 16.91%; --bottom: 20.1%; --lean: 1.1deg; }
+.p2 .litho {
+  --src: 482;
+  --st: 19; --sr: 20.67; --sb: 20; --sl: 18.67;
+  --frame: url("assets/litho-page-box.png");
+  --slice: 57 62 60 56 fill;
+}
+/* Page 3, the page with the angels: the frame picture's top left corner is at pixel 39 across and 152 down. */
+.p3 { --w: 69.26%; --left: 5.74%; --top: 22.35%; --bottom: 13.7%; --lean: -0.9deg; }
+.p3 .litho {
+  --src: 471;
+  --st: 19; --sr: 20.33; --sb: 18.67; --sl: 21.67;
+  --frame: url("assets/litho-page3-box.png");
+  --slice: 57 61 56 65 fill;
+}
+
+/* Page 4, the page of plain text: the frame picture's top left corner is at pixel 34 across and 138 down in the 658-pixel-wide photograph. */
+.p4 { --w: 67.78%; --left: 5.17%; --top: 20.97%; --bottom: 18.5%; --lean: -0.4deg; }
+.p4 .litho {
+  --src: 446;
+  --st: 17.33; --sr: 18.33; --sb: 17; --sl: 18.33;
+  --frame: url("assets/litho-page4-box.png");
+  --slice: 52 55 51 55 fill;
+}
+/* the picture at the end of page 4, ruled off like the panels on page 2 */
+
+/* Measuring unit: --u is one pixel of the frame's photograph at the size the frame is shown.
+   The frame is a close pair of outer lines, a gap, and one inner line.
+   Its corners stay as printed and only the side strips stretch, so the frame grows taller with the text. */
+.litho {
+  --u: calc(100cqw / var(--src));
+  --pad: calc(16 * var(--u));
+  --line: calc(2.2 * var(--u));          /* the thickness of the frame's inner line as it shows on screen */
+  --bw: calc(var(--st) * var(--u)) calc(var(--sr) * var(--u)) calc(var(--sb) * var(--u)) calc(var(--sl) * var(--u));
+  position: relative; isolation: isolate;
+  border: solid transparent; border-width: var(--bw);   /* keeps the text clear of the frame's lines */
+  padding: calc(12 * var(--u)) var(--pad) calc(16 * var(--u));
+  color: var(--ink);
+}
+/* The frame is its own layer behind the text. On a computer about.js bends this layer, and only this layer,
+   so its four corners land where the frame's corners are in the photograph.
+   The text is never bent: some screens draw bent text with whole lines missing. */
+.litho::before {
+  content: ""; position: absolute; z-index: -1;
+  top: calc(-1 * var(--st) * var(--u)); right: calc(-1 * var(--sr) * var(--u));
+  bottom: calc(-1 * var(--sb) * var(--u)); left: calc(-1 * var(--sl) * var(--u));
+  border-style: solid; border-width: var(--bw);
+  border-image-source: var(--frame);
+  border-image-slice: var(--slice);
+  border-image-width: var(--bw);
+  border-image-repeat: stretch;
+  transform-origin: 0 0;
+  transform: var(--warp, none);
+}
+/* The text only gets a flat tilt and lean that follows the frame as closely as a flat shape can. */
+.litho-text { display: flow-root; }
+.litho p {
+  margin: 0 0 1.1em;
+  font-size: max(15px, calc(13 * var(--u))); line-height: 1.6; font-weight: 400;
+}
+.litho p:last-child { margin-bottom: 0; }
+/* the sign-off under the last paragraph, set to the right like a signature */
+.litho p.signature { margin-top: 1.4em; text-align: right; }
+
+/* The rule runs right across the page from the inner line on the left to the inner line on the right,
+   overlapping each by one pixel so they join as they do in the book. */
+.rule {
+  border: 0; height: var(--line); background: var(--ink);
+  margin: 0 calc(-1 * (var(--pad) + 1 * var(--u))) 0;
+}
+
+/* ------------------------------------------------------------ narrow screens */
+
+/* At the book's own proportions the box is only 62% as wide as the drawing, too narrow to read on a phone.
+   So on narrow screens the drawing is shown at 140% of the card's width, with the box centred in the card,
+   and the tips of the wings and the donkey's nose run off the edges of the card.
+   The box's middle sits at pixel 274.5 of the 476, which is 57.7% across. At 140% that is 80.7%,
+   so the drawing is moved 30.7% to the left to bring the box to the middle. */
+@media (max-width: 700px) {
+  .about { padding-left: 8px; padding-right: 8px; }
+  .plate { padding-left: 0; padding-right: 0; }
+  .plate-inner { width: 140%; margin-left: -30.7%; }
+  /* on a phone each frame nearly fills its card so the text has room; it keeps its lean and its side of the card */
+  .p2 { --w: 93%; --left: 5%; --top: 9%; --bottom: 10%; }
+  .p3 { --w: 93%; --left: 2%; --top: 10%; --bottom: 7%; }
+  .p4 { --w: 93%; --left: 2%; --top: 10%; --bottom: 9%; }
+  /* phones only: the frame is turned as a whole by the average of its edges' angles */
+  .litho-plate .page-inner { rotate: var(--lean); }
+  .frame p { font-size: max(15px, calc(10.4 * var(--px))); }
+  /* the five buttons share one row, however narrow the phone */
+  .sq-row { flex-wrap: nowrap; gap: 6px; }
+  .sq { flex: 1 1 0; min-width: 0; width: auto; max-width: 96px; height: 44px; font-size: 13px; }
+}
+
+/* ------------------------------------------------------------ all text black */
+
+.plate, .plate a { color: var(--ink); }
+
+/* ------------------------------------------------------------ square buttons */
+
+/* Each button is a square in the double-ruled frame of the page 4 picture, shrunk to a small size. */
+.sq-row {
+  display: flex; justify-content: center; flex-wrap: wrap;
+  gap: clamp(6px, 1.5vw, 14px);
+  margin: 0 auto clamp(24px, 4vw, 48px);
+}
+.sq {
+  --b: clamp(5px, .8vw, 7px);
+  width: clamp(66px, 11vw, 120px); height: clamp(40px, 5vw, 56px);
+  display: grid; place-items: center;
+  padding: 0; margin: 0;
+  font: 700 clamp(13px, 1.6vw, 17px)/1 "Inter Tight", system-ui, sans-serif; letter-spacing: -.03em;   /* the title's font */
+  color: var(--ink); text-decoration: none; text-align: center;
+  background: var(--paper) padding-box; cursor: pointer;
+  border: var(--b) solid transparent;
+  border-image: url("assets/litho-page4-box.png") 52 55 51 55 / var(--b) stretch;
+  transition: background-color .25s;
+}
+/* hovering fills the whole button with the gold the About the Project card turns on the cover */
+.sq:hover { background-color: var(--gold-2); }
+.sq[lang="prs"] { font-family: "Vazirmatn", system-ui, sans-serif; letter-spacing: 0; font-size: clamp(14px, 1.8vw, 19px); }
+
+/* ------------------------------------------------------------ languages */
+
+/* English shows unless another language is chosen; Dari and Kurdî show only when chosen */
+.prs, .kmr { display: none; }
+html[data-lang="prs"] .prs, html[data-lang="kmr"] .kmr { display: revert; }
+html[data-lang="prs"] .en, html[data-lang="kmr"] .en { display: none; }
+.prs { font-family: "Vazirmatn", system-ui, sans-serif; text-align: right; }
+
+/* ------------------------------------------------------------ contact popup */
+
+.contact {
+  border: 7px solid transparent;
+  border-image: url("assets/litho-page4-box.png") 52 55 51 55 fill / 7px stretch;
+  background: none; color: var(--ink);
+  padding: 28px 32px; text-align: center;
+}
+.contact::backdrop { background: rgba(0,0,0,.45); }
+.contact p { margin: 0 0 18px; font-size: 18px; user-select: all; }
+.contact form { margin: 0; display: flex; justify-content: center; gap: 10px; }
+.sq-small { width: 96px; height: 44px; }
+
+/* Dari title and sign-off: the title's weight, in a font made for Persian */
+.title .prs { font-family: "Vazirmatn", system-ui, sans-serif; letter-spacing: 0; }
+.litho p.signature.prs { text-align: left; }

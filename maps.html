@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="dark">
+<title>Crossing Persia: Maps</title>
+<meta name="description" content="Arion's journey so far, day by day, on the map.">
+<!-- the tab icon: the Old Persian sign pa, first sign of Parsa (Persia), white on dark blue -->
+<link rel="icon" href="favicon.ico" sizes="any">
+<link rel="icon" href="assets/icon-512.png" type="image/png">
+<link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+<!-- the preview card when a link is shared on Facebook, WhatsApp, X and others -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Crossing Persia">
+<meta property="og:title" content="Crossing Persia: Maps">
+<meta property="og:description" content="Arion's journey so far, day by day, on the map.">
+<meta property="og:url" content="https://www.crossingpersia.com/maps.html">
+<meta property="og:image" content="https://www.crossingpersia.com/assets/share.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Crossing Persia: a real-time Travel Journal in 500 BCE, over the carved face of Darius with gold cuneiform">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700&family=Marcellus&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/maplibre-gl@5.6.0/dist/maplibre-gl.css">
+<link rel="stylesheet" href="maps.css">
+<!-- Greece in 500 BCE, the political layer. Made by Map Maker. -->
+<script src="greece_500bc_layer.js"></script>
+<!-- Ancient place names from Pleiades, shown instead of today's towns. -->
+<script src="ancient_names_layer.js"></script>
+</head>
+<body>
+
+<main class="home" id="home">
+  <section class="home-left">
+    <div class="home-card">
+      <div class="home-top">
+        <div class="layer-btns" role="group" aria-label="Map layers">
+          <button type="button" class="layer-btn" data-layer="politics" aria-pressed="true" disabled>Political</button>
+          <button type="button" class="layer-btn" data-layer="geography" aria-pressed="true" disabled>Geography</button>
+          <button type="button" class="layer-btn" data-layer="route" aria-pressed="true" disabled>Route</button>
+        </div>
+      </div>
+      <input type="range" class="strength" id="strength" min="0" max="100" step="5" value="30" disabled
+             aria-label="How strongly the chosen layer is drawn">
+      <a class="back-btn" href="index.html#close" aria-label="Back to the cover">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12H5M11 5l-7 7 7 7"/></svg>
+      </a>
+      <div class="home-bottom">
+        <h2 class="home-title">Arion&rsquo;s Journey So&nbsp;Far</h2>
+        <div class="home-links">
+          <a class="layer-btn sources-btn" href="journal.html">Arion&rsquo;s Journal</a>
+          <a class="layer-btn sources-btn" href="map-sources.html" target="_blank" rel="noopener">Map Sources</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="dial" id="dial">
+      <img src="assets/persepolis-sphinx.jpg" alt="" decoding="async">
+      <div class="dial-shade"></div>
+      <svg class="dial-lines" viewBox="0 0 200 200" aria-hidden="true">
+        <!-- the thin circle, running out to the tips of the Faravahar's wings; the owl stands on it -->
+        <path class="orbit" d="M132 18 A88 88 0 1 1 68 18"/>
+
+        <!-- the eight planets by their old symbols, Mercury nearest the middle and Neptune furthest out,
+             each on its own orbit and each going round at its own speed -->
+        <g class="planets">
+          <circle class="ring" cx="100" cy="100" r="38.0"/>
+          <g class="planet" style="--t:30s;--d:-0.0s" aria-label="Mercury"><text x="100" y="62.0">&#9791;&#xFE0E;</text></g>
+          <circle class="ring" cx="100" cy="100" r="43.6"/>
+          <g class="planet" style="--t:37s;--d:-14.1s" aria-label="Venus"><text x="100" y="56.4">&#9792;&#xFE0E;</text></g>
+          <circle class="ring" cx="100" cy="100" r="49.1"/>
+          <g class="planet" style="--t:44s;--d:-33.5s" aria-label="Earth"><text x="100" y="50.9">&#9793;&#xFE0E;</text></g>
+          <circle class="ring" cx="100" cy="100" r="54.7"/>
+          <g class="planet" style="--t:52s;--d:-7.4s" aria-label="Mars"><text x="100" y="45.3">&#9794;&#xFE0E;</text></g>
+          <circle class="ring" cx="100" cy="100" r="60.3"/>
+          <g class="planet" style="--t:60s;--d:-31.3s" aria-label="Jupiter"><text x="100" y="39.7">&#9795;&#xFE0E;</text></g>
+          <circle class="ring" cx="100" cy="100" r="65.9"/>
+          <g class="planet" style="--t:69s;--d:-62.3s" aria-label="Saturn"><text x="100" y="34.1">&#9796;&#xFE0E;</text></g>
+          <circle class="ring" cx="100" cy="100" r="71.4"/>
+          <g class="planet" style="--t:77s;--d:-21.8s" aria-label="Uranus"><text x="100" y="28.6">&#9797;&#xFE0E;</text></g>
+          <circle class="ring" cx="100" cy="100" r="77.0"/>
+          <g class="planet" style="--t:87s;--d:-57.8s" aria-label="Neptune"><text x="100" y="23.0">&#9798;&#xFE0E;</text></g>
+        </g>
+
+        <!-- the Faravahar, sitting on the top of the circle -->
+        <image class="faravahar" href="assets/faravahar.png" x="68" y="5.5" width="64" height="30.1"/>
+
+        <!-- the owl of Athena, sitting on the bottom of the circle -->
+        <image class="owl" href="assets/owl.png" x="82" y="154.4" width="36" height="34"/>
+      </svg>
+      <div class="dial-text" aria-live="polite">
+        <span class="dial-day" id="dialDay">Day 1</span>
+        <span class="dial-name" id="dialName" hidden></span>
+      </div>
+      <!-- the water ripple that the day and the clicked name pass through -->
+      <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+        <filter id="dialRipple" x="-20%" y="-20%" width="140%" height="140%">
+          <feTurbulence id="dialRippleNoise" type="turbulence" baseFrequency="0.012 0.05" numOctaves="2" seed="3" result="waves"/>
+          <feDisplacementMap id="dialRippleWarp" in="SourceGraphic" in2="waves" scale="0" xChannelSelector="R" yChannelSelector="G"/>
+        </filter>
+      </svg>
+    </div>
+  </section>
+
+  <section class="home-map">
+    <div id="map" class="map-frame" aria-label="Map of Arion's route, the journey so far"></div>
+  </section>
+</main>
+
+<script src="maps.js"></script>
+</body>
+</html>

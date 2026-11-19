@@ -1,0 +1,256 @@
+/* Crossing Persia, one day's article (day.html).
+   The look follows a card the owner chose (19 November 2026): a dark page holding one rounded
+   clay-brown card, the picture across its top, a heavy dark serif title with three dots beside it,
+   small capital lines of text, and thin rules with an arrow link at the bottom.
+   Its colours and fonts were then changed to a second example the owner chose: stone grey paper
+   with a fine grain, near-black Garamond capitals for the title, and Libre Baskerville for the text. The old blue look is kept in _backup-day-2026-11-19. */
+:root {
+  color-scheme: light;
+  --night: #1b1a19;          /* the dark page around the card */
+  --card: #c1baaa;           /* the stone grey paper of the second example */
+  --card-hi: #cdc6b6;
+  --card-lo: #b2ab9b;
+  --ink: #1e1c19;            /* the near-black of its title */
+  --text: #3b3731;           /* the softer dark grey of its paragraph */
+  --ink-soft: #3b3731;       /* no faded text anywhere: the same as the text */
+  --rule: rgba(30, 28, 25, .32);
+  --wash: rgba(30, 28, 25, .09);
+  --slip: #e4dfd3;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+body {
+  min-height: 100vh;
+  background: var(--night);
+  color: var(--ink);
+  font-family: 'EB Garamond', Georgia, serif;
+  -webkit-tap-highlight-color: transparent;
+}
+[hidden] { display: none !important; }
+button { font: inherit; color: inherit; }
+
+/* the back button: a clay-brown circle with a dark arrow, top left on the dark page */
+.back {
+  position: fixed; z-index: 10; top: 20px; left: 20px;
+  display: grid; place-items: center; width: 46px; height: 46px; border-radius: 50%;
+  background: var(--card); color: var(--ink);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, .35);
+  transition: background .2s, color .2s;
+}
+.back svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.back:hover, .back:focus-visible { background: var(--ink); color: var(--card); outline: none; }
+
+/* ---------- the card ---------- */
+.day {
+  max-width: 860px; min-height: 100vh; margin: 0 auto; padding: 0 0 44px;
+  position: relative; isolation: isolate;
+  background: var(--card); overflow: clip;   /* no space above or below the card, and square corners; clip, not hidden, so the player can stay on screen */
+  box-shadow: 0 20px 60px rgba(0, 0, 0, .45);
+}
+.day > :not(.hero) { margin-left: 44px; margin-right: 44px; }
+
+/* the fine grain of old paper over the whole card, as in the second example */
+.day::after {
+  content: ''; position: absolute; inset: 0; z-index: 20; pointer-events: none; opacity: .22; mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .3 0 0 0 0 .28 0 0 0 0 .24 0 0 0 1.1 -.2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+/* the picture across the top of the card, a little faded like an old print */
+.hero { margin: 0; aspect-ratio: 16 / 10; background: var(--card-lo); }
+.hero img { display: block; width: 100%; height: 100%; object-fit: cover; filter: sepia(.18) saturate(.85) contrast(.95); }
+
+/* ---------- the date, then the title ---------- */
+.head { margin-top: 28px; }
+/* the title stays on one line: day.js shrinks the size until it fits, from 84px down */
+.title {
+  margin: 4px 0 0; white-space: nowrap;
+  font: 500 84px/1.08 'EB Garamond', Georgia, serif;
+  letter-spacing: .02em; text-transform: uppercase; color: var(--ink);
+}
+.title:lang(prs) { font: 900 clamp(34px, 6.4vw, 62px)/1.5 'Vazirmatn', Tahoma, sans-serif; letter-spacing: 0; }
+
+.when {
+  margin: 0; color: var(--ink);
+  font: 400 21px/1.5 'Libre Baskerville', Georgia, serif; letter-spacing: .06em; text-transform: uppercase;
+}
+.when[dir="rtl"] { font: 600 26px/1.7 'Vazirmatn', Tahoma, sans-serif; letter-spacing: 0; }
+
+/* ---------- the three languages: small capital words, the chosen one underlined ---------- */
+.langs {
+  display: flex; align-items: center; gap: 6px 26px; flex-wrap: wrap;
+  margin-top: 22px; padding-top: 14px; border-top: 1px solid var(--rule);
+}
+.langs i { display: none; }
+.langs button {
+  height: 40px; padding: 0; cursor: pointer;
+  border: 0; border-bottom: 2px solid transparent; background: none; color: var(--ink);
+  font: 400 17px/1 'Libre Baskerville', Georgia, serif; letter-spacing: .08em; text-transform: uppercase;
+  transition: border-color .2s, opacity .2s;
+}
+.langs button[lang="prs"] { font: 700 21px/1 'Vazirmatn', Tahoma, sans-serif; letter-spacing: 0; }
+.langs button:hover:not(:disabled), .langs button:focus-visible { border-bottom-color: var(--rule); outline: none; }
+.langs button[aria-pressed="true"] { border-bottom-color: var(--ink); }
+.langs button:disabled { opacity: .5; cursor: default; }
+
+/* ---------- the Dari player ---------- */
+.player {
+  position: relative; z-index: 5;
+  display: flex; align-items: center; flex-wrap: wrap; gap: 10px 16px;
+  margin-top: 26px; padding: 8px 10px;
+  border-radius: 34px; background: var(--card-lo);
+  color: var(--ink); font-family: 'Vazirmatn', Tahoma, sans-serif;
+}
+.player.playing { position: sticky; top: 12px; box-shadow: 0 6px 20px rgba(0, 0, 0, .3); }
+.player svg { width: 1em; height: 1em; }
+.play {
+  display: grid; place-items: center; flex: none; width: 50px; height: 50px; padding: 0;
+  border: 0; border-radius: 50%; background: var(--ink); color: var(--card-hi); font-size: 21px; cursor: pointer;
+}
+.play .i-play { margin-left: 3px; }
+.play .i-pause, .player.playing .play .i-play { display: none; }
+.player.playing .play .i-pause { display: block; }
+.rewind {
+  display: flex; align-items: center; gap: 4px; flex: none; height: 38px; padding: 0 12px;
+  border: 1px solid var(--rule); border-radius: 19px; background: none; color: var(--ink); cursor: pointer; font-size: 16px;
+}
+.rewind span { font: 700 19px/1 'Vazirmatn', Tahoma, sans-serif; }
+.play:hover, .play:focus-visible { background: #1f1308; outline: none; }
+.rewind:hover, .rewind:focus-visible { background: var(--wash); outline: none; }
+.track { position: relative; flex: 1 1 140px; height: 24px; cursor: pointer; touch-action: none; }
+.track::before, .track i { content: ''; position: absolute; left: 0; top: 10px; height: 4px; border-radius: 2px; }
+.track::before { right: 0; background: var(--rule); }
+.track i { width: 0; background: var(--ink); }
+.clock { flex: none; font: 600 19px/1 'Vazirmatn', Tahoma, sans-serif; font-variant-numeric: tabular-nums; color: var(--ink-soft); }
+.volume { display: flex; align-items: center; gap: 7px; padding: 4px 6px; border-radius: 8px; cursor: pointer; touch-action: none; }
+.volume:focus-visible { outline: 2px solid var(--ink); }
+.volume > svg { font-size: 18px; }
+.volbars { display: flex; align-items: flex-end; gap: 3px; height: 22px; }
+.volbars i { width: 5px; border-radius: 1px; background: var(--rule); }
+.volbars i.on { background: var(--ink); }
+.volnum { width: 1.4em; text-align: center; font: 700 19px/1 'Vazirmatn', Tahoma, sans-serif; }
+.download {
+  display: flex; align-items: center; gap: 7px; height: 38px; padding: 0 16px; border-radius: 19px;
+  border: 1px solid var(--rule); color: var(--ink); text-decoration: none;
+  font: 600 19px/1 'Vazirmatn', Tahoma, sans-serif;
+}
+.download:hover, .download:focus-visible { background: var(--wash); outline: none; }
+
+/* ---------- the story ---------- */
+.paper { position: relative; margin-top: 32px; }
+.para { margin: 0 0 1.1em; }
+.paper { color: var(--text); }
+.paper[lang="en"] .para { font: 400 17px/1.85 'Libre Baskerville', Georgia, serif; }
+.paper[lang="en"] .para:first-child::first-letter {
+  float: left; margin: .04em .08em 0 0; font: 500 4.4em/.8 'EB Garamond', Georgia, serif; color: var(--ink);
+}
+.paper[lang="fa"] .para { font: 500 25px/2.15 'VazirDigits', 'Vazirmatn', Tahoma, sans-serif; text-align: justify; }
+.paper[lang="kmr"] .para { font: 400 17px/1.85 'Libre Baskerville', Georgia, serif; }
+.section {
+  margin: 1.6em 0 .6em; color: var(--ink);
+  font: 700 17px/1.5 'Libre Baskerville', Georgia, serif; letter-spacing: .06em; text-transform: uppercase;
+}
+.paper[lang="fa"] .section { font: 800 19px/1.6 'Vazirmatn', Tahoma, sans-serif; letter-spacing: 0; }
+
+/* a word to click, and its sentence's number, as in the reader */
+.w { cursor: pointer; border-radius: 3px; }
+.w:hover { background: var(--wash); }
+.w.lit { background: rgba(51, 32, 15, .08); }
+.w.mate { background: rgba(51, 32, 15, .16); }
+.w.on { background: rgba(51, 32, 15, .26); }
+.end { white-space: nowrap; }
+.num {
+  display: inline-grid; place-items: center; min-width: 1.5em; height: 1.5em; padding: 0 .2em; margin: 0 .1em;
+  vertical-align: .25em; border: 1px solid currentColor; border-radius: 999px; background: none;
+  color: var(--ink); cursor: pointer;
+  font: 400 12px/1 'Libre Baskerville', Georgia, serif;
+}
+.paper[lang="fa"] .num { font: 700 17px/1 'VazirDigits', 'Vazirmatn', Tahoma, sans-serif; }
+.num:hover, .num:focus-visible, .num.on { opacity: 1; background: var(--wash); outline: none; }
+
+/* the slip: a pale card with rounded corners */
+.slip {
+  position: absolute; z-index: 6; width: max-content; max-width: min(440px, 100%);
+  display: grid; gap: 3px; justify-items: center; text-align: center;
+  padding: 10px 18px 12px; background: var(--slip); color: var(--ink);
+  border-radius: 16px;
+  box-shadow: 0 10px 26px rgba(0, 0, 0, .3);
+}
+.slip-word { font: 800 25px/1.6 'VazirDigits', 'Vazirmatn', Tahoma, sans-serif; }
+.slip-word[lang="kmr"] { font: 700 22px/1.4 'EB Garamond', serif; text-transform: uppercase; }
+.slip-say { font: italic 400 19px/1.3 'EB Garamond', Georgia, serif; color: var(--ink-soft); }
+.slip-en { font: 500 18px/1.4 'EB Garamond', Georgia, serif; }
+.spoken { display: flex; align-items: baseline; gap: 7px; font: italic 17px/1.3 'EB Garamond', serif; color: var(--ink-soft); }
+.spoken .tag { font: 400 10px/1 'Libre Baskerville', Georgia, serif; font-style: normal; letter-spacing: .12em; text-transform: uppercase; }
+.spoken .sp-fa { font: 700 23px/1.5 'Vazirmatn', Tahoma, sans-serif; font-style: normal; color: var(--ink); }
+.mean { display: grid; gap: 4px; margin-top: 2px; font: 500 18px/1.35 'EB Garamond', Georgia, serif; }
+.mean .pair { display: flex; flex-wrap: wrap; justify-content: center; align-items: baseline; column-gap: 7px; }
+.mean .ph { font: 700 23px/1.6 'Vazirmatn', Tahoma, sans-serif; }
+.mean .ph[lang="kmr"] { font: 600 18px/1.4 'EB Garamond', serif; }
+.mean .ph-say { font: italic 16px/1.3 'EB Garamond', serif; color: var(--ink-soft); }
+.mean .eq { color: var(--ink); }
+
+/* ---------- the notes under the story ---------- */
+.notes {
+  margin-top: 40px; padding-top: 22px; border-top: 1px solid var(--rule);
+  color: var(--text); font: 400 17px/1.85 'Libre Baskerville', Georgia, serif;
+}
+.notes h2 { margin-bottom: 8px; color: var(--ink); font: 700 23px/1.4 'Libre Baskerville', Georgia, serif; }
+.notes p { margin: 0 0 10px; }
+/* a thin line between the photo, the evidence and the sources, like the lines above and below them */
+.notes > * + p, .notes > * + h2 { margin-top: 22px; padding-top: 22px; border-top: 1px solid var(--rule); }
+
+.notes strong { color: var(--ink); font-weight: 700; }
+.notes ul { margin: 0; padding-left: 1.2em; }
+.notes li { margin-bottom: 6px; }
+.notes a { color: var(--ink); text-underline-offset: 3px; }
+
+/* ---------- the other days: big, plain buttons, so it is obvious where to go next ---------- */
+.days {
+  display: flex; flex-wrap: wrap; justify-content: space-between; gap: 14px; margin-top: 40px; padding-top: 28px;
+  border-top: 1px solid var(--rule);
+}
+.days:empty { display: none; }
+.days a {
+  display: flex; flex-direction: column; gap: 6px; min-width: 240px; padding: 18px 26px;
+  border: 2px solid var(--ink); border-radius: 6px; color: var(--ink); text-decoration: none;
+  font: 400 17px/1.3 'Libre Baskerville', Georgia, serif;
+  transition: background .2s, color .2s;
+}
+.days a b { font: 500 34px/1 'EB Garamond', Georgia, serif; text-transform: uppercase; letter-spacing: .02em; }
+.days .next { margin-left: auto; text-align: right; align-items: flex-end; background: var(--ink); color: var(--card-hi); }
+.days a:hover, .days a:focus-visible { background: var(--ink); color: var(--card-hi); outline: none; }
+.days .next:hover, .days .next:focus-visible { background: #000; }
+
+/* ---------- a phone: the card fills the screen with a thin dark edge ---------- */
+@media (max-width: 600px) {
+  /* sits on the picture and scrolls away with it, so it never covers the player stuck at the top */
+  .back { position: absolute; top: 12px; left: 12px; width: 40px; height: 40px; }
+  .day { margin: 0; }
+  .day > :not(.hero) { margin-left: 18px; margin-right: 18px; }
+  .hero { aspect-ratio: 4 / 3; }
+  .head { margin-top: 20px; }
+  .langs { gap: 6px 18px; }
+  .paper[lang="en"] .para, .paper[lang="kmr"] .para { font-size: 16px; }
+  /* on a narrow column, stretching each line to both edges leaves wide gaps between Dari words, so the lines end ragged */
+  .paper[lang="fa"] .para { font-size: 21px; line-height: 2.05; text-align: right; }
+  /* one plain bar: play, back one second, the progress line, the time, download.
+     No volume control: a phone has its own volume buttons. */
+  /* a straight bar across the whole width of the card, square corners everywhere, stuck to the top while reading */
+  .day > .player { margin-left: 0; margin-right: 0; }
+  .player { flex-wrap: nowrap; gap: 8px; padding: 6px 18px; border-radius: 0;
+    position: sticky; top: 0; box-shadow: 0 4px 14px rgba(0, 0, 0, .25); }
+  .player.playing { top: 0; }
+  .player .play, .player .rewind, .player .download, .track::before, .track i { border-radius: 0; }
+  .play { width: 42px; height: 42px; font-size: 17px; }
+  .rewind { height: 34px; padding: 0 9px; gap: 3px; font-size: 14px; }
+  .rewind span { font-size: 16px; }
+  .track { flex: 1 1 auto; min-width: 40px; }
+  .clock { font-size: 14px; }
+  .volume { display: none; }
+  .download { width: 34px; height: 34px; padding: 0; justify-content: center; font-size: 16px; }
+  .download span { display: none; }
+  .when { font-size: 16px; }
+  .when[dir="rtl"] { font-size: 18px; line-height: 1.6; }
+  .notes { font-size: 16px; }
+  .langs button { font-size: 15px; }
+  .days a { min-width: 0; flex: 1 1 100%; }
+}
