@@ -90,13 +90,19 @@
     "Thebes to Haliartos", "Haliartos", "Haliartos to Koroneia", "Koroneia"];
   const MONTHS = ["January", "February", "March", "April", "May", "June", "July",
     "August", "September", "October", "November", "December"];
-  // the day changes at 22:00 UTC (the UTC date 22 hours ago), whatever the reader's own time zone
-  const dcFormat = new Intl.DateTimeFormat("en-US", { timeZone: "UTC", year: "numeric", month: "numeric", day: "numeric" });
-  function dcToday() {
-    const parts = dcFormat.formatToParts(new Date(Date.now() - 22 * 3600e3));
+  // Two clocks, the same for every reader wherever they are.
+  // The date and the day number change at midnight in Berlin.
+  // Where Arion is changes at 22:00 UTC, when his new post goes up (the UTC date 22 hours ago).
+  const dateFormat = tz => new Intl.DateTimeFormat("en-US", { timeZone: tz, year: "numeric", month: "numeric", day: "numeric" });
+  const berlinFormat = dateFormat("Europe/Berlin"), utcFormat = dateFormat("UTC");
+  function ymd(format, when) {
+    const parts = format.formatToParts(when);
     const get = t => +parts.find(x => x.type === t).value;
     return { y: get("year"), m: get("month"), d: get("day") };
   }
+  const dayNumber = ({ y, m, d }) => Math.round((Date.UTC(y, m - 1, d) - Date.UTC(2026, 10, 17)) / 864e5) + 1;
+  const dcToday = () => ymd(berlinFormat, new Date());
+  const postDay = () => dayNumber(ymd(utcFormat, new Date(Date.now() - 22 * 3600e3)));
   /* ---------------- words that can turn into Old Persian cuneiform
 
      Persia and Persian Empire are real Old Persian words: Parsa, and Parsa xshacam ("the kingdom of Persia").
@@ -133,11 +139,12 @@
   function setDate() {
     const { y, m, d } = dcToday();
     setHTML($("#today"), `${d} ${cun(MONTHS[m - 1])} 500&nbsp;BCE`);
-    const dayNo = Math.round((Date.UTC(y, m - 1, d) - Date.UTC(2026, 10, 17)) / 864e5) + 1;
+    const dayNo = dayNumber({ y, m, d });
     const journey = $("#journeyLine"), where = $("#whereLine");
     journey.hidden = dayNo < 1;
     setHTML($("#dayNo"), `${cun("Day")} ${dayNo}`);
-    const place = dayNo >= 1 ? DAYS[dayNo - 1] : null;
+    const posted = postDay();
+    const place = posted >= 1 ? DAYS[posted - 1] : null;
     if (!place) { setHTML(where, ""); return; }
     const leg = place.split(" to ");
     setHTML(where, leg.length === 2
@@ -146,6 +153,22 @@
   }
   setDate();
   setInterval(setDate, 60e3);
+
+  // Countdown to the next post at 22:00 UTC. Hidden once the last written day is already posted.
+  function setCountdown() {
+    const line = $("#countdownLine");
+    line.hidden = postDay() >= DAYS.length;
+    if (line.hidden) return;
+    const now = new Date();
+    let next = Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), 22);
+    if (next <= now.getTime()) next += 864e5;
+    const s = Math.ceil((next - now.getTime()) / 1e3);
+    const two = n => String(n).padStart(2, "0");
+    $("#countdown").textContent = `${Math.floor(s / 3600)}:${two(Math.floor(s / 60) % 60)}:${two(s % 60)}`;
+    if (s <= 1) setTimeout(setDate, 1500);   // show the new place as soon as the post is up
+  }
+  setCountdown();
+  setInterval(setCountdown, 1e3);
 
   /* ---------------- flicker between two versions of the same words */
 
