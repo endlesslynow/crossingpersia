@@ -98,6 +98,8 @@
     buttons.forEach(x => x.setAttribute('aria-pressed', String(x === b)));
   }));
   const dialog = document.getElementById('contact');
+  // the address is put together here, not written in the page, so spam programs that read pages do not find it
+  dialog.querySelector('p').textContent = ['zacahopkins', 'gmail.com'].join(String.fromCharCode(64));
   document.getElementById('contactBtn').addEventListener('click', () => dialog.showModal());
   // Copy puts the address on the clipboard and says "Copied" for a moment
   const copyBtn = document.getElementById('copyBtn');

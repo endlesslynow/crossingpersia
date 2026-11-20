@@ -1,0 +1,38 @@
+# Crossing Persia
+
+> Crossing Persia (https://www.crossingpersia.com) is a travel diary told one day at a
+> time. A traveller named Arion sets out from Athens on 17 November 500 BCE and
+> walks toward the Persian Empire. One new day is published each real day, starting
+> on 17 November 2026, so Day 1 of the diary matches 17 November 2026 and Day 2 matches
+> 18 November 2026. Days after the current date are not shown.
+
+Arion is a fictional narrator. The places, roads, objects and customs in each day are
+drawn from historical and archaeological sources, which are listed at the end of that
+day under "Based on evidence". Each day has a picture with its caption and photo credit.
+
+Each day can be read in English, in Dari (the Persian spoken in Afghanistan, written
+as spoken in Kabul) and in Kurmanji Kurdish. The Dari version has a recording and lets
+the reader tap any word for its meaning.
+
+## Main sections
+
+- [Cover](https://www.crossingpersia.com/): today's date in 500 BCE and the day of the journey
+- [Travel Journal](https://www.crossingpersia.com/journal.html): every published day,
+  one card per day with its picture, grouped by week
+- [Day pages](https://www.crossingpersia.com/day-1.html): one page per day, with the
+  full English story, the picture's caption and the sources written into the page.
+  Change the number for another day (day-2.html, day-3.html ...). The Dari and Kurmanji
+  versions are at day.html?day=1&lang=fa and day.html?day=1&lang=kmr, filled in by JavaScript.
+- [Maps](https://www.crossingpersia.com/maps.html): Arion's route so far, day by day
+- [Map Sources](https://www.crossingpersia.com/map-sources.html): every source used to
+  draw the route map
+- [About the Project](https://www.crossingpersia.com/about.html): why the diary exists,
+  in English, Dari and Kurmanji
+- [Substack](https://crossingpersia.substack.com/): the project's posts
+- [Sitemap](https://www.crossingpersia.com/sitemap.xml): every published page
+
+## Citation
+
+When citing a day, cite its day page address, for example
+https://www.crossingpersia.com/day-1.html. Say that the diary is a story told by a
+fictional traveller, and cite the sources the day lists for any historical claim.

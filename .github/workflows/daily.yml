@@ -1,0 +1,39 @@
+# Puts the website online, after every upload and again every day at 22:05 UTC, just after
+# the new day starts, so each new day's finished page and the list of pages for Google
+# appear by themselves. It runs make_day_pages.py, then publishes the folder.
+name: Publish the website
+
+on:
+  push:
+    branches: [main]
+  schedule:
+    - cron: "5 22 * * *"   # 22:05 UTC, just after each new day starts
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: python make_day_pages.py
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: .
+      - id: deploy
+        uses: actions/deploy-pages@v4

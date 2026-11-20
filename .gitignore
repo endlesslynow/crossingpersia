@@ -3,3 +3,5 @@ make_articles.py
 JOURNAL-LAYOUT.md
 __pycache__/
 .claude/
+measure-route.js
+assets/picture-licences.json

@@ -15,11 +15,11 @@
     });
   }
 
-  /* ================= the circle: the day, by the calendar in Washington DC. Day 1 is 17 November 2026. */
+  /* ================= the circle: the day, which changes at 22:00 UTC. Day 1 is 17 November 2026. */
 
-  const dcFormat = new Intl.DateTimeFormat("en-US", { timeZone: "America/New_York", year: "numeric", month: "numeric", day: "numeric" });
+  const dcFormat = new Intl.DateTimeFormat("en-US", { timeZone: "UTC", year: "numeric", month: "numeric", day: "numeric" });
   function dcDay() {
-    const parts = dcFormat.formatToParts(new Date());
+    const parts = dcFormat.formatToParts(new Date(Date.now() - 22 * 3600e3));
     const get = t => +parts.find(x => x.type === t).value;
     return Math.round((Date.UTC(get("year"), get("month") - 1, get("day")) - Date.UTC(2026, 10, 17)) / 864e5) + 1;
   }
@@ -132,18 +132,17 @@
 
   /* ================= which day it is on the map */
 
-  // Where he is today. Day 1 is published on 17 November 2026, one day per date after that.
+  // Where he is today. Day 1 began at 22:00 UTC on 17 November 2026, one day per date after that.
   // nightAt[d] = the stop where he sleeps at the end of day d.
   const nightAt = {1:1,2:1,3:2,4:2,5:3,6:4,7:4,8:5,9:5,10:5,11:6,12:6,13:7,14:7};
-  // A new day starts at 6am Berlin time, when that day's post goes out. Same for every reader, wherever they are.
+  // A new day starts at 22:00 UTC, the same as every other page. Same for every reader, wherever they are.
   function berlinDay(){
-    const parts=Object.fromEntries(new Intl.DateTimeFormat('en-GB',{timeZone:'Europe/Berlin',year:'numeric',month:'numeric',day:'numeric',hour:'numeric',hourCycle:'h23'}).formatToParts(new Date()).map(x=>[x.type,x.value]));
-    let d=Date.UTC(+parts.year,+parts.month-1,+parts.day);
-    if(+parts.hour<6) d-=86400000;   // before 6am Berlin it is still the previous day
+    const parts=Object.fromEntries(new Intl.DateTimeFormat('en-GB',{timeZone:'UTC',year:'numeric',month:'numeric',day:'numeric'}).formatToParts(new Date(Date.now() - 22 * 3600e3)).map(x=>[x.type,x.value]));
+    const d=Date.UTC(+parts.year,+parts.month-1,+parts.day);
     return Math.floor((d-Date.UTC(2026,10,17))/86400000)+1;
   }
   const dayNow = berlinDay();
-  // If the page stays open past 6am Berlin time, reload it so the walking man moves.
+  // If the page stays open past 22:00 UTC, reload it so the walking man moves.
   setInterval(()=>{ if(berlinDay()!==dayNow) location.reload(); }, 60000);
   const lastDay = Math.max(...Object.keys(nightAt).map(Number));
   const hereIdx = dayNow < 1 ? 0 : nightAt[Math.min(dayNow,lastDay)];
@@ -421,7 +420,7 @@
   /* ================= start the map */
 
   try{
-    await new Promise((ok,fail)=>{const s=document.createElement('script');s.src='https://cdn.jsdelivr.net/npm/maplibre-gl@5.6.0/dist/maplibre-gl.js';s.onload=ok;s.onerror=fail;document.head.appendChild(s);});
+    await new Promise((ok,fail)=>{const s=document.createElement('script');s.src='vendor/maplibre-gl.js';s.onload=ok;s.onerror=fail;document.head.appendChild(s);});
     const maplibregl=window.maplibregl;
     map=new maplibregl.Map({container:'map',style:'https://tiles.openfreemap.org/styles/liberty',center:[23.34,38.2],zoom:9.3,attributionControl:false});
     map.addControl(new maplibregl.NavigationControl({showCompass:false}),'bottom-right');

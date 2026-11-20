@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="light">
+<title>Crossing Persia: Day 2</title>
+<meta name="description" content="The soles of my feet were still burning this morning from yesterday&#x27;s 23 km. Philon joked at the way I walked and took me slowly up through the town to the…">
+<link rel="canonical" href="https://www.crossingpersia.com/day-2.html">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "Article", "headline": "Day 2: Eleusis", "description": "The soles of my feet were still burning this morning from yesterday's 23 km. Philon joked at the way I walked and took me slowly up through the town to the…", "url": "https://www.crossingpersia.com/day-2.html", "datePublished": "2026-11-18", "inLanguage": "en", "isPartOf": {"@type": "WebSite", "name": "Crossing Persia", "url": "https://www.crossingpersia.com/"}, "image": "https://www.crossingpersia.com/pictures/w01-day-2-eleusis-plaque.jpg"}</script>
+<!-- the tab icon: the Old Persian sign pa, first sign of Parsa (Persia), white on dark blue -->
+<link rel="icon" href="favicon.ico" sizes="any">
+<link rel="icon" href="assets/icon-512.png" type="image/png">
+<link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+<!-- the preview card when a link is shared on Facebook, WhatsApp, X and others -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Crossing Persia">
+<meta property="og:title" content="Crossing Persia: Day 2, Eleusis">
+<meta property="og:url" content="https://www.crossingpersia.com/day-2.html">
+<meta property="og:description" content="The soles of my feet were still burning this morning from yesterday&#x27;s 23 km. Philon joked at the way I walked and took me slowly up through the town to the…">
+<meta property="og:image" content="https://www.crossingpersia.com/assets/share.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Crossing Persia: a real-time Travel Journal in 500 BCE, over the carved face of Darius with gold cuneiform">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="fonts/librebaskerville-ebgaramond.css">
+<!-- Vazirmatn, the Dari letters of the reader -->
+<link rel="stylesheet" href="reader/css/font.css">
+<link rel="stylesheet" href="day.css">
+</head>
+<body>
+
+<a class="back" href="journal.html" aria-label="Back to the Travel Journal">
+  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12H5M11 5l-7 7 7 7"/></svg>
+</a>
+
+<main class="day" id="day">
+
+  <!-- the day's picture across the top of the card; day.js fills it in -->
+  <figure class="hero"><img id="hero-img" src="pictures/w01-day-2-eleusis-plaque.jpg" alt="Fragment of a painted clay plaque of the 500s BCE, showing a woman in a chariot and Apollo with his lyre. Archaeological Museum of Eleusis, no. 385. Photographed in 2008."></figure>
+
+  <header class="head">
+    <p class="when" id="when">Day 2 · 18 November, 500 BCE</p>
+    <h1 class="title" id="title">Eleusis</h1>
+    <!-- the three languages -->
+    <nav class="langs" aria-label="Language">
+      <button type="button" data-lang="en">English</button>
+      <i aria-hidden="true">◆</i>
+      <button type="button" data-lang="fa" lang="prs" dir="rtl">دری</button>
+      <i aria-hidden="true">◆</i>
+      <button type="button" data-lang="kmr" lang="ku">Kurdî</button>
+    </nav>
+  </header>
+
+  <!-- the Dari story read aloud -->
+  <div id="player" class="player" hidden>
+    <button type="button" id="rewind" class="rewind" aria-label="Back one second">
+      <svg viewBox="0 0 16 16"><path d="M8 2a6 6 0 1 1-5.7 7.9l1.9-.6A4 4 0 1 0 5 5.2L7 7H1V1l2.5 2.5A6 6 0 0 1 8 2z" fill="currentColor"/></svg>
+      <span>۱</span>
+    </button>
+    <button type="button" id="play" class="play" aria-label="Play the story (space bar)">
+      <svg class="i-play" viewBox="0 0 16 16"><path d="M4 2l10 6l-10 6z" fill="currentColor"/></svg>
+      <svg class="i-pause" viewBox="0 0 16 16"><path d="M4 2h3v12H4zm5 0h3v12H9z" fill="currentColor"/></svg>
+    </button>
+    <div id="track" class="track" role="slider" aria-label="Where in the story"><i id="track-fill"></i></div>
+    <span id="clock" class="clock"></span>
+    <div id="volume" class="volume" role="slider" tabindex="0" aria-label="Volume" aria-valuemin="1" aria-valuemax="10">
+      <svg viewBox="0 0 16 16"><path d="M1.5 6h3l4-3.2v10.4l-4-3.2h-3z" fill="currentColor"/><path d="M11 5.4a3.6 3.6 0 0 1 0 5.2M12.8 3.6a6.2 6.2 0 0 1 0 8.8" stroke="currentColor" stroke-width="1.4" fill="none" stroke-linecap="round"/></svg>
+      <span id="volbars" class="volbars"></span>
+      <b id="volnum" class="volnum"></b>
+    </div>
+    <a id="download" class="download" download aria-label="Download the recording">
+      <svg viewBox="0 0 16 16"><path d="M7 1h2v7.2l2.6-2.6 1.4 1.4L8 12 3 7l1.4-1.4L7 8.2zM2 13h12v2H2z" fill="currentColor"/></svg>
+      <span>دانلود صدا</span>
+    </a>
+    <audio id="audio" preload="metadata"></audio>
+  </div>
+
+  <!-- the story: English as plain text; Dari and Kurmanji with a word's meaning on a click -->
+  <article id="paper" class="paper">
+    <div id="story"><p class="para">The soles of my feet were still burning this morning from yesterday's 23 km. Philon joked at the way I walked and took me slowly up through the town to the sanctuary of Demeter and Kore. Two months ago this hillside was packed with people who had walked from Athens for the Mysteries. This morning there were only a few women carrying small offerings, a priest sweeping the steps, and the wind coming in off the bay.</p><p class="para">Inside the gate are painted clay plaques, gifts to the goddesses from people whose prayers were answered. On one of them a woman drives a chariot, holding the reins in a white arm, and Apollo sits beside her with his lyre. The colours were so bright they looked wet. I stood in front of it for a long time, wondering who had paid for it and what Demeter had done for them.</p></div>
+    <div id="slip" class="slip" role="status" hidden></div>
+  </article>
+
+  <!-- the picture's caption, credit and the sources, in English under every version -->
+  <footer class="notes" id="notes"><p><strong>Photo:</strong> Fragment of a painted clay plaque of the 500s BCE, showing a woman in a chariot and Apollo with his lyre. Archaeological Museum of Eleusis, no. 385. Photographed in 2008. <em>Photo Credit: Photo by Zde, CC BY-SA 4.0, via <a href="https://commons.wikimedia.org/wiki/File:Black-figure_plaque,_fragment,_Woman,_Apollo,_6th_century_BC,_AM_eleusis,_081189.jpg" target="_blank" rel="noopener">Wikimedia Commons</a>.</em></p><p><strong>Based on evidence:</strong> The sanctuary of Demeter at Eleusis was on the eastern slope of the town's hill, in the middle of the town rather than on its edge. About 580 to 570 BCE its main terrace was enlarged, and the first hall of initiation was built on it soon after. The painted plaque in the picture was made in the 500s BCE and is kept in the Eleusis museum.</p><h2>Sources</h2><ul><li>Hans Beck, "Along the Mystery Highway: Eleusis and Thebes in the Archaic Age", in Hans Beck and Sebastian Scharff, eds., <em>Beyond Mysteries: The Local World of Ancient Eleusis</em> (Brill, 2025), p. 50.</li><li>Painted clay plaque, Archaeological Museum of Eleusis no. 385, as recorded on its Wikimedia Commons page.</li></ul></footer>
+
+  <nav class="days" id="days" aria-label="Other days"><a class="prev" href="day-1.html"><b>← Day 1</b><span>Athens to Eleusis</span></a><a class="next" href="day-3.html"><b>Day 3 →</b><span>Eleusis to Oinoe</span></a></nav>
+</main>
+
+<script>var READINGS = [], DAY_PAGE = 2;</script>
+<script src="articles.js"></script>
+<script src="day.js"></script>
+</body>
+</html>

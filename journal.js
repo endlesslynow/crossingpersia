@@ -53,11 +53,11 @@
   };
   const SUMMARY = { A: "h", B: "p", Aflip: "a", Bflip: "i" };
   const SUMMARY_COLOUR = { A: "var(--orange)", B: "var(--pink)" };
-  // Today's day of the journey, worked out the same way as on the cover: by the calendar date in Washington DC,
+  // Today's day of the journey, worked out the same way as on the cover: by the UTC date 22 hours ago, so a new day starts at 22:00 UTC,
   // with 17 November 2026 as Day 1. Cards for days after today are hidden; their spots stay empty.
-  const dcFormat = new Intl.DateTimeFormat("en-US", { timeZone: "America/New_York", year: "numeric", month: "numeric", day: "numeric" });
+  const dcFormat = new Intl.DateTimeFormat("en-US", { timeZone: "UTC", year: "numeric", month: "numeric", day: "numeric" });
   function dayNumber() {
-    const parts = dcFormat.formatToParts(new Date());
+    const parts = dcFormat.formatToParts(new Date(Date.now() - 22 * 3600e3));
     const get = t => +parts.find(x => x.type === t).value;
     return Math.round((Date.UTC(get("year"), get("month") - 1, get("day")) - Date.UTC(2026, 10, 17)) / 864e5) + 1;
   }

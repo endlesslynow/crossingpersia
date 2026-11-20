@@ -90,10 +90,10 @@
     "Thebes to Haliartos", "Haliartos", "Haliartos to Koroneia", "Koroneia"];
   const MONTHS = ["January", "February", "March", "April", "May", "June", "July",
     "August", "September", "October", "November", "December"];
-  // the calendar date in Washington DC, whatever the reader's own time zone
-  const dcFormat = new Intl.DateTimeFormat("en-US", { timeZone: "America/New_York", year: "numeric", month: "numeric", day: "numeric" });
+  // the day changes at 22:00 UTC (the UTC date 22 hours ago), whatever the reader's own time zone
+  const dcFormat = new Intl.DateTimeFormat("en-US", { timeZone: "UTC", year: "numeric", month: "numeric", day: "numeric" });
   function dcToday() {
-    const parts = dcFormat.formatToParts(new Date());
+    const parts = dcFormat.formatToParts(new Date(Date.now() - 22 * 3600e3));
     const get = t => +parts.find(x => x.type === t).value;
     return { y: get("year"), m: get("month"), d: get("day") };
   }

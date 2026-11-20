@@ -27,18 +27,52 @@
   var FOCUS = { 1: [.47, .55], 2: [.69, .48], 3: [.56, .52], 4: [.48, .5], 7: [.5, .45],
                 9: [.74, .52], 10: [.75, .57], 12: [.5, .75], 14: [.66, .25] };
 
-  // Today's day of the journey, as on the cover and the journal: the date in Washington DC,
+  // Today's day of the journey, as on the cover and the journal: the UTC date 22 hours ago, so a new day starts at 22:00 UTC,
   // with 17 November 2026 as Day 1. A day after today is not shown yet.
   function dayNumber() {
-    var parts = new Intl.DateTimeFormat('en-US', { timeZone: 'America/New_York', year: 'numeric', month: 'numeric', day: 'numeric' })
-      .formatToParts(new Date());
+    var parts = new Intl.DateTimeFormat('en-US', { timeZone: 'UTC', year: 'numeric', month: 'numeric', day: 'numeric' })
+      .formatToParts(new Date(Date.now() - 22 * 3600e3));
     var get = function (t) { return +parts.filter(function (x) { return x.type === t; })[0].value; };
     return Math.round((Date.UTC(get('year'), get('month') - 1, get('day')) - Date.UTC(2026, 10, 17)) / 864e5) + 1;
   }
   var TODAY = dayNumber();
-  var DAY = parseInt(new URLSearchParams(location.search).get('day'), 10) || 1;
+  // a finished page (day-3.html, made by make_articles.py) names its day; day.html takes it from the address
+  var DAY = window.DAY_PAGE || parseInt(new URLSearchParams(location.search).get('day'), 10) || 1;
   var article = window.ARTICLES[DAY];
   if (!article || DAY > TODAY) { location.replace('journal.html'); return; }
+
+  // ---------- for Google and chatbots ----------
+  // This day's own address, a summary from its first paragraph, and hidden facts
+  // (title, date, picture) that search engines read directly.
+  (function () {
+    if (window.DAY_PAGE) return;   // a finished day page already has these written in
+    var SITE = 'https://www.crossingpersia.com/';
+    var url = SITE + 'day-' + DAY + '.html';
+    var summary = (article.paragraphs[0] || '').replace(/<[^>]+>/g, '');
+    if (summary.length > 160) summary = summary.slice(0, 157).replace(/\s+\S*$/, '') + '…';
+    var head = document.head;
+    var canon = document.createElement('link');
+    canon.rel = 'canonical'; canon.href = url;
+    head.appendChild(canon);
+    var desc = document.querySelector('meta[name="description"]');
+    if (desc && summary) desc.content = summary;
+    var published = new Date(Date.UTC(2026, 10, 16 + DAY)).toISOString().slice(0, 10);
+    var facts = {
+      '@context': 'https://schema.org',
+      '@type': 'Article',
+      headline: 'Day ' + DAY + ': ' + article.title,
+      description: summary,
+      url: url,
+      datePublished: published,
+      inLanguage: 'en',
+      isPartOf: { '@type': 'WebSite', name: 'Crossing Persia', url: SITE }
+    };
+    if (article.pic) facts.image = SITE + encodeURI(PICS + article.pic);
+    var ld = document.createElement('script');
+    ld.type = 'application/ld+json';
+    ld.textContent = JSON.stringify(facts);
+    head.appendChild(ld);
+  })();
 
   // ---------- the picture ----------
   // The picture covers the top of the card without stretching, centred on its object.
@@ -402,6 +436,7 @@
     }
     notes.innerHTML = html;
     var days = $('days');
+    days.innerHTML = '';   // a finished day page comes with its own buttons; these replace them
     // each button names the day and its place, e.g. "Day 3 →" over "Eleusis to Oinoe"
     function dayButton(n, cls, label) {
       return '<a class="' + cls + '" href="day.html?day=' + n + '"><b>' + label + '</b><span>' + window.ARTICLES[n].title + '</span></a>';
