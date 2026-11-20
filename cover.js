@@ -151,21 +151,37 @@
       ? `${cun("Arion")} is currently on the road from ${leg[0]} to ${leg[1]}`
       : `${cun("Arion")} is currently in ${place}`);
   }
-  setDate();
-  setInterval(setDate, 60e3);
+  // Each paper holds exactly one line. If a line is wider than the card, shrink that paper's text
+  // (and its padding, which is measured in em) just enough to fit. Rerun when the window or the words change.
+  function fitPapers() {
+    const room = $(".stone-top").clientWidth;
+    $$(".card-stone .paper").forEach(el => {
+      el.style.fontSize = "";
+      if (el.hidden || !room) return;
+      const w = el.getBoundingClientRect().width;
+      if (w > room) el.style.fontSize = (parseFloat(getComputedStyle(el).fontSize) * room / w * .98) + "px";
+    });
+  }
+  const setDateAndFit = () => { setDate(); fitPapers(); };
+  setDateAndFit();
+  setInterval(setDateAndFit, 60e3);
+  addEventListener("resize", fitPapers);
+  if (document.fonts) document.fonts.ready.then(fitPapers);
 
   // Countdown to the next post at 22:00 UTC. Hidden once the last written day is already posted.
   function setCountdown() {
     const line = $("#countdownLine");
+    const wasHidden = line.hidden;
     line.hidden = postDay() >= DAYS.length;
-    if (line.hidden) return;
+    if (line.hidden) { if (!wasHidden) fitPapers(); return; }
     const now = new Date();
     let next = Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), 22);
     if (next <= now.getTime()) next += 864e5;
     const s = Math.ceil((next - now.getTime()) / 1e3);
     const two = n => String(n).padStart(2, "0");
     $("#countdown").textContent = `${Math.floor(s / 3600)}:${two(Math.floor(s / 60) % 60)}:${two(s % 60)}`;
-    if (s <= 1) setTimeout(setDate, 1500);   // show the new place as soon as the post is up
+    if (wasHidden) fitPapers();   // the first time the countdown shows, fit it with its numbers in place
+    if (s <= 1) setTimeout(setDateAndFit, 1500);   // show the new place as soon as the post is up
   }
   setCountdown();
   setInterval(setCountdown, 1e3);
