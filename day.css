@@ -227,6 +227,12 @@ button { font: inherit; color: inherit; }
 .days .next { margin-left: auto; text-align: right; align-items: flex-end; background: var(--ink); color: var(--card-hi); }
 .days a:hover, .days a:focus-visible { background: var(--ink); color: var(--card-hi); outline: none; }
 .days .next:hover, .days .next:focus-visible { background: #000; }
+.days .wait {
+  display: flex; flex-direction: column; align-items: flex-end; gap: 8px; margin-left: auto; padding: 18px 26px;
+  border: 2px solid var(--ink); border-radius: 6px; color: var(--ink); text-align: right;
+}
+.days .wait b { font: 400 17px/1.3 'Libre Baskerville', Georgia, serif; }
+.days .wait span { font: 500 34px/1 'EB Garamond', Georgia, serif; font-variant-numeric: tabular-nums; }
 
 /* ---------- a phone: the card fills the screen with a thin dark edge ---------- */
 @media (max-width: 600px) {
@@ -260,5 +266,5 @@ button { font: inherit; color: inherit; }
   .when[dir="rtl"] { font-size: 18px; line-height: 1.6; }
   .notes { font-size: 16px; }
   .langs button { font-size: 15px; }
-  .days a { min-width: 0; flex: 1 1 100%; }
+  .days a, .days .wait { min-width: 0; flex: 1 1 100%; }
 }

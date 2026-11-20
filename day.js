@@ -443,5 +443,19 @@
     }
     if (window.ARTICLES[DAY - 1]) days.innerHTML += dayButton(DAY - 1, 'prev', '← Day ' + (DAY - 1));
     if (window.ARTICLES[DAY + 1] && DAY + 1 <= TODAY) days.innerHTML += dayButton(DAY + 1, 'next', 'Day ' + (DAY + 1) + ' →');
+    // on the newest day, where the next day's button will go: a countdown to the next entry at 22:00 UTC, as on the home page
+    if (window.ARTICLES[DAY + 1] && DAY + 1 > TODAY) {
+      days.innerHTML += '<div class="wait"><b>Expecting journal entry for Day ' + (DAY + 1) + ' in</b><span id="wait-clock"></span></div>';
+      var clock = $('wait-clock');
+      var tick = function () {
+        var now = new Date(), next = Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), 22);
+        if (next <= now.getTime()) next += 864e5;
+        var t = Math.ceil((next - now.getTime()) / 1e3), two = function (n) { return (n < 10 ? '0' : '') + n; };
+        clock.textContent = Math.floor(t / 3600) + ':' + two(Math.floor(t / 60) % 60) + ':' + two(t % 60);
+        if (t <= 1) setTimeout(function () { location.reload(); }, 1500);   // the new day is up: reload to show its button
+      };
+      tick();
+      setInterval(tick, 1e3);
+    }
   })();
 })();
