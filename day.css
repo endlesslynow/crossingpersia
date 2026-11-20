@@ -183,7 +183,7 @@ button { font: inherit; color: inherit; }
   box-shadow: 0 10px 26px rgba(0, 0, 0, .3);
 }
 .slip-word { font: 800 25px/1.6 'VazirDigits', 'Vazirmatn', Tahoma, sans-serif; }
-.slip-word[lang="kmr"] { font: 700 22px/1.4 'EB Garamond', serif; text-transform: uppercase; }
+.slip-word[lang="kmr"] { font: 700 22px/1.4 'EB Garamond', serif; }
 .slip-say { font: italic 400 19px/1.3 'EB Garamond', Georgia, serif; color: var(--ink-soft); }
 .slip-en { font: 500 18px/1.4 'EB Garamond', Georgia, serif; }
 .spoken { display: flex; align-items: baseline; gap: 7px; font: italic 17px/1.3 'EB Garamond', serif; color: var(--ink-soft); }
