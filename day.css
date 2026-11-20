@@ -92,12 +92,12 @@ button { font: inherit; color: inherit; }
 .langs button:disabled { opacity: .5; cursor: default; }
 .map-link {
   display: inline-flex; align-items: center; justify-content: center; margin-left: auto;
-  height: 44px; padding: 0 22px; border: 2px solid var(--ink); border-radius: 0;
-  color: var(--ink); text-decoration: none;
-  font: 400 17px/1 'Libre Baskerville', Georgia, serif; letter-spacing: .08em; text-transform: uppercase;
-  transition: background .2s, color .2s;
+  height: 40px; padding: 0 20px; border: 2px solid var(--ink); border-radius: 0;
+  background: none; color: var(--ink); text-decoration: none;
+  font: 500 22px/1 'EB Garamond', Georgia, serif; letter-spacing: .06em; text-transform: uppercase;
+  transition: background .2s;
 }
-.map-link:hover, .map-link:focus-visible { background: var(--ink); color: var(--card); outline: none; }
+.map-link:hover, .map-link:focus-visible { background: var(--ink); color: var(--card-hi); outline: none; }
 
 /* ---------- the Dari player ---------- */
 .player {
