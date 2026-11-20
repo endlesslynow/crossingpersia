@@ -153,20 +153,67 @@
   }
   // Each paper holds exactly one line. If a line is wider than the card, shrink that paper's text
   // (and its padding, which is measured in em) just enough to fit. Rerun when the window or the words change.
+  // Then, where the tablet bites into the card, check that the papers end above the space kept for the tablet;
+  // if they reach into it, shrink every paper by the same amount so the last line still shows.
   function fitPapers() {
-    const room = $(".stone-top").clientWidth;
-    $$(".card-stone .paper").forEach(el => {
-      el.style.fontSize = "";
-      if (el.hidden || !room) return;
-      const w = el.getBoundingClientRect().width;
-      if (w > room) el.style.fontSize = (parseFloat(getComputedStyle(el).fontSize) * room / w * .98) + "px";
+    const top = $(".stone-top"), card = $(".card-stone");
+    const room = top.clientWidth;
+    if (!room) return;
+    const papers = $$(".card-stone .paper").filter(el => !el.hidden);
+    $$(".card-stone .paper").forEach(el => { el.style.fontSize = ""; el.style.marginTop = ""; el.classList.remove("wrap"); });
+    const MIN = 13;   // never smaller than 13px; a line that cannot fit at 13px wraps onto two lines instead
+    const size = (el, px) => {
+      el.style.fontSize = Math.max(MIN, px) + "px";
+      el.classList.toggle("wrap", px < MIN);
+    };
+    // width: offsetLeft and offsetWidth ignore the load animation's transforms, so they measure the resting layout
+    // a paper that is too wide for its place first moves left (never past its own left start of 0),
+    // and only shrinks its text if it still does not fit
+    papers.forEach(el => {
+      el.style.marginLeft = "";
+      if (el.offsetLeft > 0 && el.offsetLeft + el.offsetWidth > room) el.style.marginLeft = Math.max(0, room - el.offsetWidth) + "px";
+      const free = room - Math.max(0, el.offsetLeft);
+      if (el.offsetWidth > free) size(el, parseFloat(getComputedStyle(el).fontSize) * free / el.offsetWidth * .98);
     });
+    // height: only on the wide layout, where the card has a fixed height and the tablet sits in its bottom
+    const cs = getComputedStyle(card);
+    if (cs.position !== "absolute") return;
+    // When the papers are too tall, take the space from these in order, so the day line and the place line
+    // keep the size that fills the card's width for as long as possible:
+    //   1. the spaces between the papers, down to 4px each
+    //   2. the title, the date and the countdown, down to the size of the two long lines (the title to 1.4 times it)
+    //   3. only then every paper
+    const long = papers.filter(el => el.matches(".journey, .where"));
+    const others = papers.filter(el => !long.includes(el));
+    const px = el => parseFloat(getComputedStyle(el).fontSize);
+    const longSize = long.length ? Math.max(...long.map(px)) : 0;
+    const floor = el => el.matches("h1") ? longSize * 1.4 : longSize;
+    const avail = card.clientHeight - parseFloat(cs.paddingBottom) - top.offsetTop;
+    const over = () => { const last = papers[papers.length - 1]; return last.offsetTop + last.offsetHeight - avail; };
+    let extra = over();
+    if (extra > 0) {
+      const gaps = papers.slice(1).map(el => parseFloat(getComputedStyle(el).marginTop));
+      const spare = gaps.reduce((a, g) => a + Math.max(0, g - 4), 0);
+      const f = spare ? Math.min(1, extra / spare) : 0;
+      papers.slice(1).forEach((el, i) => { el.style.marginTop = (gaps[i] - Math.max(0, gaps[i] - 4) * f) + "px"; });
+    }
+    for (let i = 0; i < 30 && (extra = over()) > 0; i++) {
+      const shrinkable = others.filter(el => px(el) > floor(el) + .5);
+      const group = shrinkable.length ? shrinkable : papers.filter(el => !el.classList.contains("wrap"));
+      group.forEach(el => size(el, shrinkable.length ? Math.max(floor(el), px(el) * .96) : px(el) * .96));
+      if (!shrinkable.length && group.every(el => px(el) <= MIN)) break;
+    }
   }
   const setDateAndFit = () => { setDate(); fitPapers(); };
   setDateAndFit();
   setInterval(setDateAndFit, 60e3);
   addEventListener("resize", fitPapers);
-  if (document.fonts) document.fonts.ready.then(fitPapers);
+  addEventListener("load", fitPapers);
+  // measure again whenever a font finishes loading (a line measured in the stand-in font is the wrong width)
+  // and whenever the card's width changes for any reason, not only when the window is resized
+  if (document.fonts) { document.fonts.ready.then(fitPapers); document.fonts.addEventListener("loadingdone", fitPapers); }
+  let fitWidth = 0;
+  new ResizeObserver(([e]) => { const w = Math.round(e.contentRect.width); if (w !== fitWidth) { fitWidth = w; fitPapers(); } }).observe($(".stone-top"));
 
   // Countdown to the next post at 22:00 UTC. Hidden once the last written day is already posted.
   function setCountdown() {
