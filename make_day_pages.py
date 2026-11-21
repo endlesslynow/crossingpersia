@@ -1,15 +1,16 @@
 """Writes the pages that depend on today's date:
-  - day-1.html, day-2.html ... one finished page for each day already reached, with the English
+  - day-1.html, day-2.html ... one finished page for every day written so far, with the English
     story, picture, caption and sources written into the page, so chatbots can read them.
     In a browser day.js still runs on them, so the language buttons, the Dari recording and
     the word slips work as on day.html.
   - sitemap.xml, the list of pages for search engines.
 
-It reads only articles.js and day.html, both already on the website. GitHub runs it every
-day at 22:05 UTC (see .github/workflows/daily.yml), so a new day appears by itself. make_articles.py
-also runs it after copying the articles.
+It reads only articles.js and day.html, both already on the website. make_articles.py runs it
+after copying the articles, and GitHub runs it again on every upload.
 
-A new day starts at 22:00 UTC; 17 November 2026 is Day 1.
+Every written day is made at once, including days still to come. No daily upload is needed:
+in a browser, day.js sends a reader who opens a day before its date to the journal page, so
+each day appears by itself at 22:00 UTC on its date (17 November 2026 is Day 1).
 """
 import datetime
 import html
@@ -23,8 +24,7 @@ articles = {int(k): v for k, v in json.loads(text[text.index("{"):text.rindex("}
 
 SITE = "https://www.crossingpersia.com/"
 today = (datetime.datetime.now(datetime.timezone.utc) - datetime.timedelta(hours=22)).date()   # Day 1 began at 22:00 UTC on 17 November
-day_now = (today - datetime.date(2026, 11, 17)).days + 1
-released = [n for n in sorted(articles, key=int) if int(n) <= day_now]
+released = sorted(articles, key=int)   # every written day; day.js hides a day until its date
 pages = ["", "journal.html", "maps.html", "about.html", "map-sources.html"]
 pages += [f"day-{n}.html" for n in released]
 (HERE / "sitemap.xml").write_text(
@@ -36,7 +36,7 @@ pages += [f"day-{n}.html" for n in released]
 print(f"sitemap.xml: {len(pages)} pages")
 
 
-# Each day already reached as a finished page, day-1.html, day-2.html ..., with the English
+# Every written day as a finished page, day-1.html, day-2.html ..., with the English
 # story, picture, caption and sources already written into the page. Chatbots that do not run
 # the page's code can read these. In a browser day.js still runs on them, so the language
 # buttons, the Dari recording and the word slips work as on day.html.
