@@ -84,10 +84,12 @@
 
   /* ---------------- today's date, in 500 BCE */
 
-  // Day 1 of the diary is 17 November. These are the approved days, from the audio files of weeks 1 and 2.
+  // Day 1 of the diary is 17 November. These are the approved days, the end of each post title.
   const DAYS = ["Athens to Eleusis", "Eleusis", "Eleusis to Oinoe", "Oinoe", "Oinoe to Hysiai",
     "Hysiai to Plataea", "Plataea", "Plataea to Thebes", "Thebes", "Thebes",
-    "Thebes to Haliartos", "Haliartos", "Haliartos to Koroneia", "Koroneia"];
+    "Thebes to Haliartos", "Haliartos", "Haliartos to Koroneia", "Koroneia",
+    "Koroneia to Lebadeia", "Lebadeia", "Lebadeia to Chaeronea", "Chaeronea to Daulis",
+    "Daulis toward Delphi", "Delphi", "Delphi"];
   const MONTHS = ["January", "February", "March", "April", "May", "June", "July",
     "August", "September", "October", "November", "December"];
   // Two clocks, the same for every reader wherever they are.

@@ -33,6 +33,13 @@
     { pic: "w02-day-12-bird-jug.jpg", tint: "#9a7a5e", crop: [0.2, 0.66, 0.6, 0.183] },
     { pic: "w02-day-13-copais-rottmann.jpg", tint: "#908176" },
     { pic: "w02-day-14-thebes-figurines.jpg", tint: "#a28c7b", crop: [0.535, 0.165, 0.25, 0.1664] },
+    { pic: "w03-day-15-athena-lekanis.jpg", tint: "#755b4b", crop: [0.234, 0.17, 0.45, 0.63] },
+    { pic: "w03-day-16-trophonios-springs.jpg", tint: "#666851" },
+    { pic: "w03-day-17-chaeronea-plain.jpg", tint: "#9b9f98" },
+    { pic: "w03-day-18-panopeus-view.jpg", tint: "#6f756a" },
+    { pic: "w03-day-19-parnassus.jpg", tint: "#6f747e" },
+    { pic: "w03-day-20-apollo-marble-torsos.jpg", tint: "#646b72", crop: [0.03, 0.38, 0.94, 0.21] },
+    { pic: "w03-day-21-kleobis-biton.jpg", tint: "#9a8577", crop: [0.64, 0.05, 0.22, 0.32] },
   ];
 
   /* Each arrangement fills two square halves. Slot letters match the shapes in journal.css.
