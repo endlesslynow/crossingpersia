@@ -258,7 +258,12 @@
       else if(g.type==='MultiPolygon') g.coordinates=g.coordinates.map(p=>p.map(smoothRing));
     });
   }
-  const GR_LAYERS = ['gr-fill','gr-hatch','gr-citylines','gr-outline','gr-hover','gr-lake','gr-labels'];
+  // The wider map from persia_500bc_layer.js: the whole Persian Empire and its neighbours. Its Persia already holds
+  // the Greek layer's Persia, so when it is there the Greek layer's own Persia is not drawn (its data stays in the file).
+  const PE = window.PERSIA_500BC || null;
+  const GR_SKIP = PE ? ['!=',['get','name'],'Achaemenid Empire'] : ['has','name'];
+  const PE_LAYERS = ['pe-fill','pe-hatch','pe-outline','pe-hover','pe-labels','pe-dots','pe-towns'];
+  const GR_LAYERS = [...PE_LAYERS,'gr-fill','gr-hatch','gr-citylines','gr-outline','gr-hover','gr-lake','gr-labels'];
   let politicsOn = false, polPopup = null;
   // Line patterns as in Map Maker: each state has its own colour and lines, set in greece_500bc_layer.js.
   const GR_PATTERNS=['lines','lines-back','horizontal','vertical','cross','grid'];
@@ -283,13 +288,14 @@
     map.addSource('gr-citylines',{type:'geojson',data:GR.cityLines});
     map.addSource('gr-lake',{type:'geojson',data:GR.lake});
     map.addSource('gr-labels',{type:'geojson',data:GR.labels});
-    map.addLayer({id:'gr-fill',type:'fill',source:'gr-states',layout:vis,paint:{'fill-color':['get','colour'],'fill-opacity':['interpolate',['linear'],['zoom'],5,0.3,10,0.18]}},under);
-    map.addLayer({id:'gr-hatch',type:'fill',source:'gr-states',layout:vis,filter:['in',['get','pattern'],['literal',GR_PATTERNS]],paint:{'fill-pattern':['concat','gr-pat-',['get','pattern']],'fill-opacity':0.35}},under);
+    if(PE) addPersia(vis,under);
+    map.addLayer({id:'gr-fill',type:'fill',source:'gr-states',layout:vis,filter:GR_SKIP,paint:{'fill-color':['get','colour'],'fill-opacity':['interpolate',['linear'],['zoom'],5,0.3,10,0.18]}},under);
+    map.addLayer({id:'gr-hatch',type:'fill',source:'gr-states',layout:vis,filter:['all',GR_SKIP,['in',['get','pattern'],['literal',GR_PATTERNS]]],paint:{'fill-pattern':['concat','gr-pat-',['get','pattern']],'fill-opacity':0.35}},under);
     map.addLayer({id:'gr-citylines',type:'line',source:'gr-citylines',layout:vis,minzoom:6,paint:{'line-color':'#1b2733','line-opacity':0.45,'line-width':['interpolate',['linear'],['zoom'],6,0.5,11,1.4]}},under);
-    map.addLayer({id:'gr-outline',type:'line',source:'gr-states',layout:{...vis,'line-join':'round'},paint:{'line-color':'#1b2733','line-opacity':0.85,'line-width':['interpolate',['linear'],['zoom'],5,1,10,2.4]}},under);
+    map.addLayer({id:'gr-outline',type:'line',source:'gr-states',layout:{...vis,'line-join':'round'},filter:GR_SKIP,paint:{'line-color':'#1b2733','line-opacity':0.85,'line-width':['interpolate',['linear'],['zoom'],5,1,10,2.4]}},under);
     map.addLayer({id:'gr-hover',type:'line',source:'gr-states',layout:{...vis,'line-join':'round'},filter:['==',['get','name'],''],paint:{'line-color':'#ffffff','line-width':3.5}},under);
     map.addLayer({id:'gr-lake',type:'fill',source:'gr-lake',layout:vis,paint:{'fill-color':'#8fc3dc','fill-opacity':0.9,'fill-outline-color':'#4f86a6'}},under);
-    map.addLayer({id:'gr-labels',type:'symbol',source:'gr-labels',layout:{...vis,'text-field':['get','name'],'text-font':['Noto Sans Bold'],
+    map.addLayer({id:'gr-labels',type:'symbol',source:'gr-labels',filter:GR_SKIP,layout:{...vis,'text-field':['get','name'],'text-font':['Noto Sans Bold'],
       'text-size':['interpolate',['linear'],['zoom'],5,['case',['get','big'],13,10],9,['case',['get','big'],18,14]],
       'text-transform':'uppercase','text-letter-spacing':0.08,'text-max-width':9,'symbol-sort-key':['case',['get','big'],0,1]},
       paint:{'text-color':'#1b2733','text-halo-color':'rgba(255,255,255,0.9)','text-halo-width':1.6}});
@@ -302,6 +308,42 @@
       const name=e.features[0].properties.name;
       if(polPopup) polPopup.remove();
       // just the name, in the same white box with an X as a stop's box
+      polPopup=watch(new window.maplibregl.Popup({maxWidth:'290px'}),name).setLngLat(e.lngLat)
+        .setHTML(`<h2 class="popup-title">${name}</h2>`).addTo(map);
+    });
+  }
+  // The Persian Empire and its neighbours, under the Greek states. The Greek states are already cut out of these shapes.
+  function addPersia(vis,under){
+    map.addSource('pe-states',{type:'geojson',data:PE.states});
+    map.addSource('pe-labels',{type:'geojson',data:PE.labels});
+    map.addSource('pe-towns',{type:'geojson',data:PE.towns});
+    map.addLayer({id:'pe-fill',type:'fill',source:'pe-states',layout:vis,paint:{'fill-color':['get','colour'],'fill-opacity':0.3}},under);
+    map.addLayer({id:'pe-hatch',type:'fill',source:'pe-states',layout:vis,filter:['in',['get','pattern'],['literal',GR_PATTERNS]],paint:{'fill-pattern':['concat','gr-pat-',['get','pattern']],'fill-opacity':0.35}},under);
+    map.addLayer({id:'pe-outline',type:'line',source:'pe-states',layout:{...vis,'line-join':'round'},paint:{'line-color':'#1b2733','line-opacity':0.85,'line-width':['interpolate',['linear'],['zoom'],3,0.7,10,2.4]}},under);
+    map.addLayer({id:'pe-hover',type:'line',source:'pe-states',layout:{...vis,'line-join':'round'},filter:['==',['get','name'],''],paint:{'line-color':'#ffffff','line-width':3.5}},under);
+    const kindIs=k=>['==',['get','kind'],k];
+    // State names in capitals as in the Greek layer; seas and the Aral Sea in blue italics.
+    map.addLayer({id:'pe-labels',type:'symbol',source:'pe-labels',layout:{...vis,'text-field':['get','name'],
+      'text-font':['case',kindIs('state'),['literal',['Noto Sans Bold']],['literal',['Noto Sans Italic']]],
+      'text-size':['interpolate',['linear'],['zoom'],3,['case',kindIs('state'),11,10],7,['case',kindIs('state'),17,15]],
+      'text-transform':['case',kindIs('state'),'uppercase','none'],'text-letter-spacing':['case',kindIs('state'),0.08,0.04],'text-max-width':9},
+      paint:{'text-color':['case',kindIs('state'),'#1b2733','#1f5f8b'],'text-halo-color':'rgba(255,255,255,0.9)','text-halo-width':1.6}});
+    // Royal cities and capitals: a bigger dot and bold name. Other cities: a small dot.
+    map.addLayer({id:'pe-dots',type:'circle',source:'pe-towns',layout:vis,
+      paint:{'circle-radius':['case',kindIs('capital'),4,3],'circle-color':'#1b2733','circle-stroke-color':'#fff','circle-stroke-width':1.2}});
+    map.addLayer({id:'pe-towns',type:'symbol',source:'pe-towns',layout:{...vis,'text-field':['get','name'],
+      'text-font':['case',kindIs('capital'),['literal',['Noto Sans Bold']],['literal',['Noto Sans Regular']]],
+      'text-size':['interpolate',['linear'],['zoom'],3,10,8,14],'text-variable-anchor':['right','left','top','bottom'],'text-radial-offset':0.6,'text-justify':'auto'},
+      paint:{'text-color':'#1b2733','text-halo-color':'rgba(255,255,255,0.92)','text-halo-width':1.6}});
+    map.on('mousemove','pe-fill',e=>{ if(!politicsOn) return; map.getCanvas().style.cursor='pointer'; map.setFilter('pe-hover',['==',['get','name'],e.features[0].properties.name]); });
+    map.on('mouseleave','pe-fill',()=>{ map.getCanvas().style.cursor=''; map.setFilter('pe-hover',['==',['get','name'],'']); });
+    map.on('click','pe-fill',e=>{
+      if(!politicsOn) return;
+      // a click on a place marker belongs to that place, not to the country underneath it
+      if(e.originalEvent.target.closest('.maplibregl-marker')) return;
+      const name=e.features[0].properties.name;
+      if(polPopup) polPopup.remove();
+      // just the name, in the same white box with an X as a stop's box, as for the Greek states
       polPopup=watch(new window.maplibregl.Popup({maxWidth:'290px'}),name).setLngLat(e.lngLat)
         .setHTML(`<h2 class="popup-title">${name}</h2>`).addTo(map);
     });
@@ -407,6 +449,8 @@
     const s=k=>STRENGTH[k]/100, set=(id,prop,v)=>{ if(map&&map.getLayer(id)) map.setPaintProperty(id,prop,v); };
     set('gr-fill','fill-opacity',s('politics'));
     set('gr-hatch','fill-opacity',0.6*s('politics'));
+    set('pe-fill','fill-opacity',s('politics'));
+    set('pe-hatch','fill-opacity',0.6*s('politics'));
     set('geo-height','color-relief-opacity',s('geography'));
     set('path-white','line-opacity',0.9*s('route'));
     set('path-dashes','line-opacity',s('route'));
