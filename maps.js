@@ -357,14 +357,14 @@
   }
 
   // ---------- Every place named in the diary (data in mentioned_places_layer.js), always shown ----------
-  // The list is the vault note Route and Calendar/Places on the Map.md. A place within about half a kilometre of one of
+  // The list is the vault note Route and Calendar/Places on the Map.md. A place within about 300 metres of one of
   // Arion's stops or passing places shares that marker and is not drawn again.
   const MP_KIND = {town:'Town',sanctuary:'Sanctuary',citadel:'Citadel',mountain:'Mountain',river:'River',lake:'Lake',spring:'Spring',plain:'Plain',island:'Island',region:'Region'};
   const MP_MAXDAY = dayNow;
   const MP_FEATS = (()=>{
     const MP = window.MENTIONED_PLACES; if(!MP) return [];
     const shown=[...stops,...waypoints], km=(a,b)=>Math.hypot((a[0]-b[0])*88,(a[1]-b[1])*111);
-    return MP.features.filter(f=>f.properties.first<=MP_MAXDAY && !shown.some(s=>km(f.geometry.coordinates,[s.lng,s.lat])<0.6))
+    return MP.features.filter(f=>f.properties.first<=MP_MAXDAY && !shown.some(s=>km(f.geometry.coordinates,[s.lng,s.lat])<0.3))
       .map(f=>({...f,properties:{...f.properties,days:f.properties.days.filter(d=>d<=MP_MAXDAY)}}));
   })();
   // Pleiades numbers of these places, so the Geography layer does not name the same mountain or river a second time
