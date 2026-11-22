@@ -302,6 +302,7 @@
     map.on('mousemove','gr-fill',e=>{ if(!politicsOn) return; map.getCanvas().style.cursor='pointer'; map.setFilter('gr-hover',['==',['get','name'],e.features[0].properties.name]); });
     map.on('mouseleave','gr-fill',()=>{ map.getCanvas().style.cursor=''; map.setFilter('gr-hover',['==',['get','name'],'']); });
     map.on('click','gr-fill',e=>{
+      if(mpHit(e)) return;   // a click on a place named in the diary opens that place instead
       if(!politicsOn) return;
       // a click on a place marker belongs to that place, not to the country underneath it
       if(e.originalEvent.target.closest('.maplibregl-marker')) return;
@@ -338,6 +339,7 @@
     map.on('mousemove','pe-fill',e=>{ if(!politicsOn) return; map.getCanvas().style.cursor='pointer'; map.setFilter('pe-hover',['==',['get','name'],e.features[0].properties.name]); });
     map.on('mouseleave','pe-fill',()=>{ map.getCanvas().style.cursor=''; map.setFilter('pe-hover',['==',['get','name'],'']); });
     map.on('click','pe-fill',e=>{
+      if(mpHit(e)) return;   // a click on a place named in the diary opens that place instead
       if(!politicsOn) return;
       // a click on a place marker belongs to that place, not to the country underneath it
       if(e.originalEvent.target.closest('.maplibregl-marker')) return;
@@ -352,6 +354,53 @@
     politicsOn=on;
     GR_LAYERS.forEach(id=>{ if(map&&map.getLayer(id)) map.setLayoutProperty(id,'visibility',on?'visible':'none'); });
     if(!on&&polPopup) polPopup.remove();
+  }
+
+  // ---------- Every place named in the diary (data in mentioned_places_layer.js), always shown ----------
+  // The list is the vault note Route and Calendar/Places on the Map.md. A place within about half a kilometre of one of
+  // Arion's stops or passing places shares that marker and is not drawn again.
+  const MP_KIND = {town:'Town',sanctuary:'Sanctuary',citadel:'Citadel',mountain:'Mountain',river:'River',lake:'Lake',spring:'Spring',plain:'Plain',island:'Island',region:'Region'};
+  const MP_MAXDAY = dayNow;
+  const MP_FEATS = (()=>{
+    const MP = window.MENTIONED_PLACES; if(!MP) return [];
+    const shown=[...stops,...waypoints], km=(a,b)=>Math.hypot((a[0]-b[0])*88,(a[1]-b[1])*111);
+    return MP.features.filter(f=>f.properties.first<=MP_MAXDAY && !shown.some(s=>km(f.geometry.coordinates,[s.lng,s.lat])<0.6))
+      .map(f=>({...f,properties:{...f.properties,days:f.properties.days.filter(d=>d<=MP_MAXDAY)}}));
+  })();
+  // Pleiades numbers of these places, so the Geography layer does not name the same mountain or river a second time
+  const MP_LAYERS = ['mp-dots','mp-names-pt','mp-names-area'];
+  const mpHit = e => !!(map && map.getLayer('mp-dots') && map.queryRenderedFeatures(e.point,{layers:MP_LAYERS}).length);
+  const MP_IDS = new Set(MP_FEATS.map(f=>String(f.properties.pleiades)));
+  function addMentioned(){
+    if(!MP_FEATS.length) return;
+    const byName=Object.fromEntries(MP_FEATS.map(f=>[f.properties.name,f.properties]));
+    map.addSource('mp',{type:'geojson',data:{type:'FeatureCollection',features:MP_FEATS}});
+    const k=v=>['==',['get','kind'],v], inK=list=>['in',['get','kind'],['literal',list]];
+    // a dot for towns, sanctuaries and springs; mountains get a triangle in their name; rivers, lakes, plains, islands and regions only a name
+    map.addLayer({id:'mp-dots',type:'circle',source:'mp',filter:inK(['town','sanctuary','citadel','spring']),
+      paint:{'circle-radius':4,'circle-color':'#1b2733','circle-stroke-color':'#e0a020','circle-stroke-width':2}});
+    const withDot=inK(['town','sanctuary','citadel','spring']);
+    const text={'text-field':['case',k('mountain'),['concat','▲ ',['get','name']],['get','name']],
+      'text-font':['case',inK(['town','sanctuary','citadel']),['literal',['Noto Sans Bold']],['literal',['Noto Sans Italic']]],
+      'text-size':['interpolate',['linear'],['zoom'],5,['case',k('region'),12,10],10,['case',k('region'),17,14]],
+      'text-transform':['case',k('region'),'uppercase','none'],'text-letter-spacing':['case',k('region'),0.15,0],
+      'text-max-width':8,'symbol-sort-key':['case',k('region'),2,0],'text-padding':3};
+    const paint={'text-color':['case',k('mountain'),'#4a2e17',inK(['river','lake','spring']),'#1f5f8b',k('plain'),'#2f5a24',k('region'),'#6b5a48','#1b2733'],
+      'text-halo-color':'rgba(255,255,255,0.92)','text-halo-width':1.6};
+    // names beside a dot move round it to find room; the others sit on their place
+    map.addLayer({id:'mp-names-pt',type:'symbol',source:'mp',filter:withDot,
+      layout:{...text,'text-variable-anchor':['top','bottom','left','right'],'text-radial-offset':0.6,'text-justify':'auto'},paint});
+    map.addLayer({id:'mp-names-area',type:'symbol',source:'mp',filter:['!',withDot],layout:text,paint});
+    const open=e=>{
+      if(e.originalEvent.target.closest('.maplibregl-marker')) return;
+      const p=byName[e.features[0].properties.name]; if(!p) return;
+      watch(new window.maplibregl.Popup({maxWidth:'280px'}),p.name).setLngLat(e.lngLat).setHTML(`<h2 class="popup-title">${p.name}</h2><p style="margin:8px 0 0">${MP_KIND[p.kind]||''}, named in the journal on:</p>${p.days.map(d=>`<a class="popup-day" href="day.html?day=${d}" target="_blank" rel="noopener"><b>Day ${d}</b></a>`).join('')}<a class="popup-day" target="_blank" rel="noopener noreferrer" href="${P(p.pleiades)}">Pleiades place record ↗</a>`).addTo(map);
+    };
+    MP_LAYERS.forEach(id=>{
+      map.on('click',id,open);
+      map.on('mouseenter',id,()=>{ map.getCanvas().style.cursor='pointer'; });
+      map.on('mouseleave',id,()=>{ map.getCanvas().style.cursor=''; });
+    });
   }
 
   // ---------- Geography layer: height, mountains, lakes, rivers, plains ----------
@@ -402,7 +451,7 @@
       map.addSource('geo-lake',{type:'geojson',data:GR.lake});
       map.addLayer({id:'geo-lake',type:'fill',source:'geo-lake',layout:vis,paint:{'fill-color':'#8fc3dc','fill-opacity':0.9,'fill-outline-color':'#4f86a6'}},under);
     }
-    map.addSource('geo-names',{type:'geojson',data:{type:'FeatureCollection',features:GEO_NAMES.map(([kind,name,id,lng,lat])=>({type:'Feature',properties:{kind,name,id},geometry:{type:'Point',coordinates:[lng,lat]}}))}});
+    map.addSource('geo-names',{type:'geojson',data:{type:'FeatureCollection',features:GEO_NAMES.filter(g=>!MP_IDS.has(String(g[2]))).map(([kind,name,id,lng,lat])=>({type:'Feature',properties:{kind,name,id},geometry:{type:'Point',coordinates:[lng,lat]}}))}});
     const kindIs=k=>['==',['get','kind'],k];
     map.addLayer({id:'geo-names',type:'symbol',source:'geo-names',layout:{...vis,
       'text-field':['case',kindIs('mountain'),['concat','▲ ',['get','name']],['get','name']],
@@ -423,7 +472,8 @@
     const AN = window.ANCIENT_NAMES; if(!AN) return;
     const route=[...stops.map(s=>({...s,rank:-1})),...waypoints.map(w=>({...w,rank:1}))];
     const km=(a,b)=>Math.hypot((a[0]-b[0])*88,(a[1]-b[1])*111);
-    const feats=AN.features.filter(f=>!route.some(r=>km(f.geometry.coordinates,[r.lng,r.lat])<1.5));
+    // and the same for the places named in the journal, which have their own names on the map
+    const feats=AN.features.filter(f=>!route.some(r=>km(f.geometry.coordinates,[r.lng,r.lat])<1.5) && !MP_FEATS.some(m=>km(f.geometry.coordinates,m.geometry.coordinates)<1.5));
     route.forEach(r=>feats.push({type:'Feature',properties:{name:r.name,kind:r.rank<0?'stop':'town',rank:r.rank},geometry:{type:'Point',coordinates:[r.lng,r.lat]}}));
     map.addSource('anc',{type:'geojson',data:{type:'FeatureCollection',features:feats}});
     const k=v=>['==',['get','kind'],v], big=['<=',['get','rank'],0];
@@ -504,6 +554,7 @@
            || l.id==='waterway_line_label') map.setLayoutProperty(l.id,'visibility','none');
       });
       addAncientNames();
+      addMentioned();   // after the ancient names, so these win where names collide
       // Hide modern man-made lakes. The numbers are OpenStreetMap's, looked up on 17 November 2026:
       // reservoirs (Marathon, Mornos, Evinos, Kremasta, Kastraki, Stratos, Plastiras, Pineios, Ladon, Doxa, Taka, Smokovo, Aoos and two unnamed),
       // the Schinias Olympic rowing lake, two salt works and a fish farm.
