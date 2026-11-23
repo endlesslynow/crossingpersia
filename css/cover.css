@@ -59,6 +59,9 @@ img { display: block; }
   min-height: 680px;
   position: relative;
   z-index: 3;
+  /* the cards fly out past the edges when a page opens; cut them off at the edge, or a phone zooms out
+     to fit them and the page opened behind the cover (the maps page) is drawn at desktop width */
+  overflow: clip;
 }
 .col { display: grid; gap: var(--gap); min-height: 0; min-width: 0; position: relative; }
 .col-left  { grid-template-rows: auto 1fr; z-index: 1; container-type: inline-size; --R: min(46cqw, 240px); }
@@ -116,7 +119,7 @@ h1 { font-size: clamp(30px, 2.7vw, 46px); line-height: 1.02; margin-top: 14px; }
   position: absolute; top: 0; left: 0; right: 0;
   height: calc(100cqh - var(--D) / 2);
   /* the tapestry fills the card; the words sit on top of it in white blocks, all flush left, like a poster */
-  background: #2a2f5c url(assets/tapestry.jpg) center top / cover no-repeat;
+  background: #2a2f5c url(../assets/tapestry.jpg) center top / cover no-repeat;
   color: var(--ink);
   padding: clamp(22px, 3.6vh, 46px) 22px 0;
   text-align: left;
@@ -177,7 +180,7 @@ h1 .swap-stack[data-cun] > .alt, .panel-label .swap-stack[data-cun] > .alt { fon
 /* the tablet's own cuneiform, pressed faintly into the stone */
 .cuneiform-texture {
   position: absolute; left: -8%; right: -8%; bottom: calc(var(--D) / 2 - 20px); height: 46%;
-  background: url(assets/cuneiform-ink.png) center bottom / cover no-repeat;
+  background: url(../assets/cuneiform-ink.png) center bottom / cover no-repeat;
   opacity: .045;
   pointer-events: none;
   -webkit-mask: linear-gradient(180deg, transparent 0%, #000 22%, #000 80%, transparent 100%);
@@ -262,7 +265,7 @@ h1 .swap-stack[data-cun] > .alt, .panel-label .swap-stack[data-cun] > .alt { fon
 /* one strip per line of writing; the script reveals each strip left to right, sign by sign */
 .type-line {
   position: absolute; left: 0; width: 100cqw;
-  background: url(assets/tablet-text-gold.png) no-repeat;
+  background: url(../assets/tablet-text-gold.png) no-repeat;
   background-size: 100cqw auto;
 }
 
@@ -316,13 +319,13 @@ h1 .swap-stack[data-cun] > .alt, .panel-label .swap-stack[data-cun] > .alt { fon
   position: absolute; inset: 0;
   background: center / 100% 100% no-repeat;
 }
-.disk-dots { background-image: url(assets/disk-grain.png); opacity: .36; }
+.disk-dots { background-image: url(../assets/disk-grain.png); opacity: .36; }
 .disk-ink {
   position: absolute; inset: 0;
   -webkit-mask: conic-gradient(from 0deg, #000 var(--sweep), transparent calc(var(--sweep) + .5deg));
           mask: conic-gradient(from 0deg, #000 var(--sweep), transparent calc(var(--sweep) + .5deg));
 }
-.disk-lines { background-image: url(assets/disk-ink.png); }
+.disk-lines { background-image: url(../assets/disk-ink.png); }
 .disk-glint {
   display: none;
   position: absolute; inset: 0; border-radius: 50%; pointer-events: none; opacity: 0;

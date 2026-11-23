@@ -1,9 +1,9 @@
 /* Crossing Persia, one day's article: day.html?day=1
 
    The picture in its arched frame, the title, and three buttons: English, دری (Dari) and Kurdî.
-   English comes from articles.js (made by make_articles.py from the Obsidian vault).
+   English comes from data/articles.js (made by tools/make_articles.py from the Obsidian vault).
    Dari and Kurmanji come from the reader in "The Website/reader": the same reading files,
-   with the same slips, copied into reader/ here by make_articles.py. A click on a word shows its sound and meaning; a click on the small
+   with the same slips, copied into reader/ here by tools/make_articles.py. A click on a word shows its sound and meaning; a click on the small
    number after a sentence shows the sentence in English. The Dari version has the reader's
    player for the recording.
    A language whose file is not made yet keeps its button, greyed out. */
@@ -36,7 +36,7 @@
     return Math.round((Date.UTC(get('year'), get('month') - 1, get('day')) - Date.UTC(2026, 10, 17)) / 864e5) + 1;
   }
   var TODAY = dayNumber();
-  // a finished page (day-3.html, made by make_articles.py) names its day; day.html takes it from the address
+  // a finished page (day-3.html, made by tools/make_day_pages.py when the site is uploaded) names its day; day.html takes it from the address
   var DAY = window.DAY_PAGE || parseInt(new URLSearchParams(location.search).get('day'), 10) || 1;
   var article = window.ARTICLES[DAY];
   if (!article || DAY > TODAY) { location.replace('journal.html'); return; }

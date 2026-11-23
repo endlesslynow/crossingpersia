@@ -1,12 +1,16 @@
 """Writes the pages that depend on today's date:
   - day-1.html, day-2.html ... one finished page for every day written so far, with the English
     story, picture, caption and sources written into the page, so chatbots can read them.
-    In a browser day.js still runs on them, so the language buttons, the Dari recording and
+    In a browser js/day.js still runs on them, so the language buttons, the Dari recording and
     the word slips work as on day.html.
   - sitemap.xml, the list of pages for search engines.
 
-It reads only articles.js and day.html, both already on the website. make_articles.py runs it
-after copying the articles, and GitHub runs it again on every upload.
+These pages are not kept in the website folder or on GitHub. GitHub makes them fresh on every
+upload (.github/workflows/daily.yml runs this script), so the folder stays tidy however many
+days there are. make_articles.py runs it with --check, which builds every page without saving
+any, so a problem shows up before uploading rather than on GitHub.
+
+It reads only data/articles.js and day.html, both already on the website.
 
 Every written day is made at once, including days still to come. No daily upload is needed:
 in a browser, day.js sends a reader who opens a day before its date to the journal page, so
@@ -16,10 +20,12 @@ import datetime
 import html
 import json
 import re
+import sys
 from pathlib import Path
 
-HERE = Path(__file__).resolve().parent
-text = (HERE / "articles.js").read_text(encoding="utf-8")
+HERE = Path(__file__).resolve().parent.parent   # the website folder; this script is in its tools folder
+CHECK = "--check" in sys.argv                    # build every page but save nothing
+text = (HERE / "data" / "articles.js").read_text(encoding="utf-8")
 articles = {int(k): v for k, v in json.loads(text[text.index("{"):text.rindex("}") + 1]).items()}
 
 SITE = "https://www.crossingpersia.com/"
@@ -27,12 +33,14 @@ today = (datetime.datetime.now(datetime.timezone.utc) - datetime.timedelta(hours
 released = sorted(articles, key=int)   # every written day; day.js hides a day until its date
 pages = ["", "journal.html", "maps.html", "about.html", "map-sources.html"]
 pages += [f"day-{n}.html" for n in released]
-(HERE / "sitemap.xml").write_text(
+sitemap = (
     '<?xml version="1.0" encoding="UTF-8"?>\n'
     '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
     + "".join(f"  <url>\n    <loc>{html.escape(SITE + p)}</loc>\n    <lastmod>{today.isoformat()}</lastmod>\n  </url>\n"
               for p in pages)
-    + "</urlset>\n", encoding="utf-8")
+    + "</urlset>\n")
+if not CHECK:
+    (HERE / "sitemap.xml").write_text(sitemap, encoding="utf-8")
 print(f"sitemap.xml: {len(pages)} pages")
 
 
@@ -94,9 +102,10 @@ def day_page(n):
         if old not in page:
             raise SystemExit(f"day.html has changed, cannot find: {old}")
         page = page.replace(old, new, 1)
-    (HERE / f"day-{n}.html").write_text(page, encoding="utf-8")
+    if not CHECK:
+        (HERE / f"day-{n}.html").write_text(page, encoding="utf-8")
 
 
 for n in released:
     day_page(n)
-print(f"finished day pages: day-1.html to day-{released[-1]}.html" if released else "finished day pages: none yet")
+print(("checked" if CHECK else "finished") + f" day pages: day-1.html to day-{released[-1]}.html" if released else "day pages: none yet")

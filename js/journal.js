@@ -1,8 +1,9 @@
 /* Crossing Persia, the Travel Journal page.
 
-   THE LAYOUT IS FINISHED AND APPROVED (19 November 2026). Read JOURNAL-LAYOUT.md in this folder before changing it.
+   THE LAYOUT IS FINISHED AND APPROVED (19 November 2026). Read tools/JOURNAL-LAYOUT.md in the website folder before changing it.
 
-   One group of eight cards per week: seven days and a week summary, always in the bottom right.
+   One group of eight cards per week: seven days and the week's summary video, always in the bottom right.
+   The summary card opens week.html?week=N, which shows only that week's video; the links are in data/videos.js.
    The weeks repeat in a cycle of four, forever:
      week 1, 5, 9 ...   arrangement A
      week 2, 6, 10 ...  arrangement B
@@ -13,7 +14,7 @@
    Each day card opens its article, day.html?day=N. To send a day somewhere else, add href: "..." to its entry in DAYS. */
 
 (() => {
-  // the article pictures, copied into pictures/ by make_articles.py.
+  // the article pictures, copied into pictures/ by tools/make_articles.py.
   // crop is the part of the picture a card shows, as [left, top, width, height], each a fraction of the whole picture.
   // It is drawn entirely inside the object so no background shows. Pictures without a crop simply fill their card.
   // tint is the average colour of the part of the picture the card shows; it is laid over the picture as a light wash.
@@ -113,7 +114,10 @@
       for (const slot of half) {
         if (slot === SUMMARY[kind]) {
           if (TODAY < first + 6) continue;          // the summary is hidden until the last day of its week
-          html += `<div class="card summary s-${slot}" style="background:${SUMMARY_COLOUR[key]}"><span class="sum-title">Week ${w} Summary</span></div>`;
+          // a button to the week's video once its link is in data/videos.js; until then a plain card with the same words
+          const video = (window.WEEK_VIDEOS || {})[w];
+          const tag = video ? `a href="week.html?week=${w}"` : "div";
+          html += `<${tag} class="card summary s-${slot}" style="background:${SUMMARY_COLOUR[key]}"><span class="sum-title">Week ${w} Summary Video</span></${video ? "a" : "div"}>`;
           continue;
         }
         const n = first + order.indexOf(slot);

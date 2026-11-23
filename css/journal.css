@@ -149,6 +149,9 @@ img { display: block; }
   font-size: 7.4cqw; line-height: .98; font-weight: 600; letter-spacing: -.03em;
 }
 .sum-title { max-width: 7em; }
+/* a summary card with its video is a button to it: hovering turns it cream, like the day labels */
+a.card.summary { color: inherit; text-decoration: none; transition: background-color .25s, color .25s; }
+a.card.summary:hover, a.card.summary:focus-visible { background: var(--cream) !important; color: var(--bg); }
 .card.summary.s-p { justify-content: center; text-align: center; font-size: 6.2cqw; }
 
 /* English and Dari in one spot, copied from the cover; the script flickers between them */

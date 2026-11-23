@@ -58,7 +58,7 @@ img { display: block; }
   margin: calc(-6 * var(--px)) 0 0 calc(126 * var(--px));
   border-style: solid;
   border-width: calc(8 * var(--px)) calc(10 * var(--px)) calc(7 * var(--px)) calc(12 * var(--px));
-  border-image: url("assets/winged-rider-box.png") 24 30 21 36 fill / calc(8 * var(--px)) calc(10 * var(--px)) calc(7 * var(--px)) calc(12 * var(--px)) stretch;
+  border-image: url("../assets/winged-rider-box.png") 24 30 21 36 fill / calc(8 * var(--px)) calc(10 * var(--px)) calc(7 * var(--px)) calc(12 * var(--px)) stretch;
   padding: calc(26 * var(--px)) calc(22 * var(--px)) calc(26 * var(--px));
 }
 
@@ -130,7 +130,7 @@ img { display: block; }
 .p2 .litho {
   --src: 482;
   --st: 19; --sr: 20.67; --sb: 20; --sl: 18.67;
-  --frame: url("assets/litho-page-box.png");
+  --frame: url("../assets/litho-page-box.png");
   --slice: 57 62 60 56 fill;
 }
 /* Page 3, the page with the angels: the frame picture's top left corner is at pixel 39 across and 152 down. */
@@ -138,7 +138,7 @@ img { display: block; }
 .p3 .litho {
   --src: 471;
   --st: 19; --sr: 20.33; --sb: 18.67; --sl: 21.67;
-  --frame: url("assets/litho-page3-box.png");
+  --frame: url("../assets/litho-page3-box.png");
   --slice: 57 61 56 65 fill;
 }
 
@@ -147,7 +147,7 @@ img { display: block; }
 .p4 .litho {
   --src: 446;
   --st: 17.33; --sr: 18.33; --sb: 17; --sl: 18.33;
-  --frame: url("assets/litho-page4-box.png");
+  --frame: url("../assets/litho-page4-box.png");
   --slice: 52 55 51 55 fill;
 }
 /* the picture at the end of page 4, ruled off like the panels on page 2 */
@@ -241,7 +241,7 @@ img { display: block; }
   color: var(--ink); text-decoration: none; text-align: center;
   background: var(--paper) padding-box; cursor: pointer;
   border: var(--b) solid transparent;
-  border-image: url("assets/litho-page4-box.png") 52 55 51 55 / var(--b) stretch;
+  border-image: url("../assets/litho-page4-box.png") 52 55 51 55 / var(--b) stretch;
   transition: background-color .25s;
 }
 /* hovering fills the whole button with the gold the About the Project card turns on the cover */
@@ -260,7 +260,7 @@ html[data-lang="prs"] .en, html[data-lang="kmr"] .en { display: none; }
 
 .contact {
   border: 7px solid transparent;
-  border-image: url("assets/litho-page4-box.png") 52 55 51 55 fill / 7px stretch;
+  border-image: url("../assets/litho-page4-box.png") 52 55 51 55 fill / 7px stretch;
   background: none; color: var(--ink);
   padding: 28px 32px; text-align: center;
 }

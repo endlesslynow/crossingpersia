@@ -1,0 +1,46 @@
+/* Crossing Persia, one week's summary video (week.html?week=N).
+   The video fills the screen from the top edge; under it a coloured bar holds the back button and the title.
+   The bar is the colour of the week's card on the Travel Journal: orange or pink. */
+
+:root {
+  --bg: #0d0c0a;
+  --cream: #f6efe2;
+  --gold-2: #dcbd82;
+  --orange: #ec6a2c;
+  --pink: #e88da2;
+  --ease: cubic-bezier(.22, .8, .2, 1);
+}
+
+* { box-sizing: border-box; }
+html, body { margin: 0; height: 100%; background: var(--bg); color: var(--cream); }
+body {
+  font-family: "Inter Tight", "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+:focus-visible { outline: 2px solid var(--gold-2); outline-offset: 3px; }
+
+.video-page { height: 100vh; height: 100dvh; display: flex; flex-direction: column; }
+.player { flex: 1 1 auto; min-height: 0; background: #000; }
+.player iframe { display: block; width: 100%; height: 100%; border: 0; }
+
+.bar {
+  flex: none; display: flex; align-items: center; gap: 20px;
+  padding: 14px 20px; background: var(--orange); color: var(--bg);
+}
+.bar.pink { background: var(--pink); }
+.title { margin: 0; font-size: clamp(24px, 3.4vw, 44px); line-height: 1.05; font-weight: 600; letter-spacing: -.03em; }
+
+.back-btn {
+  flex: none; width: 56px; aspect-ratio: 1; border-radius: 50%;
+  display: grid; place-items: center;
+  background: var(--bg); color: var(--cream);
+  transition: transform .3s var(--ease), background-color .25s;
+}
+.back-btn svg { width: 44%; height: 44%; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; transition: transform .3s var(--ease); }
+.back-btn:hover { background: #2a221a; }
+.back-btn:hover svg { transform: translateX(-3px); }
+.back-btn:active { transform: scale(.95); }
+
+@media (prefers-reduced-motion: reduce) {
+  .back-btn, .back-btn svg { transition: none; }
+}

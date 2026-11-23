@@ -1,7 +1,11 @@
 # Working files that are not part of the website
-make_articles.py
-JOURNAL-LAYOUT.md
+tools/make_articles.py
+tools/JOURNAL-LAYOUT.md
+tools/measure-route.js
 __pycache__/
 .claude/
-measure-route.js
 assets/picture-licences.json
+
+# Made by tools/make_day_pages.py on GitHub at every upload, so not kept here
+/day-*.html
+/sitemap.xml
