@@ -25,7 +25,13 @@
   // Where each picture's object sits, as a fraction across and down, so the wide frame centres on it.
   // Taken from the middle of each day's crop in journal.js. A picture not listed is centred.
   var FOCUS = { 1: [.47, .55], 2: [.69, .48], 3: [.56, .52], 4: [.48, .5], 7: [.5, .45],
-                9: [.74, .52], 10: [.75, .57], 12: [.5, .75], 14: [.66, .25] };
+                9: [.74, .52], 10: [.75, .57], 12: [.5, .75], 14: [.66, .25], 15: [.46, .49], 20: [.5, .49], 21: [.75, .21] };
+
+  // Online, a link goes to the day's finished page (day-7.html), whose shared link shows that day's own title and picture.
+  // Those pages are made on GitHub, so on this computer the link goes to day.html instead.
+  function dayAddress(n) {
+    return /(^|\.)crossingpersia\.com$/.test(location.hostname) ? 'day-' + n + '.html' : 'day.html?day=' + n;
+  }
 
   // Today's day of the journey, as on the cover and the journal: the UTC date 22 hours ago, so a new day starts at 22:00 UTC,
   // with 17 November 2026 as Day 1. A day after today is not shown yet.
@@ -439,7 +445,7 @@
     days.innerHTML = '';   // a finished day page comes with its own buttons; these replace them
     // each button names the day and its place, e.g. "Day 3 →" over "Eleusis to Oinoe"
     function dayButton(n, cls, label) {
-      return '<a class="' + cls + '" href="day.html?day=' + n + '"><b>' + label + '</b><span>' + window.ARTICLES[n].title + '</span></a>';
+      return '<a class="' + cls + '" href="' + dayAddress(n) + '"><b>' + label + '</b><span>' + window.ARTICLES[n].title + '</span></a>';
     }
     if (window.ARTICLES[DAY - 1]) days.innerHTML += dayButton(DAY - 1, 'prev', '← Day ' + (DAY - 1));
     if (window.ARTICLES[DAY + 1] && DAY + 1 <= TODAY) days.innerHTML += dayButton(DAY + 1, 'next', 'Day ' + (DAY + 1) + ' →');

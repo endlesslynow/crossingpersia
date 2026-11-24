@@ -10,6 +10,8 @@
 <link rel="icon" href="favicon.ico" sizes="any">
 <link rel="icon" href="assets/icon-512.png" type="image/png">
 <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+<!-- the diary as a feed, for people who follow sites in a feed reader -->
+<link rel="alternate" type="application/rss+xml" title="Crossing Persia" href="https://crossingpersia.substack.com/feed">
 <!-- the preview card when a link is shared on Facebook, WhatsApp, X and others -->
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Crossing Persia">
@@ -23,7 +25,7 @@
 <link rel="stylesheet" href="fonts/librebaskerville-ebgaramond.css">
 <!-- Vazirmatn, the Dari letters of the reader -->
 <link rel="stylesheet" href="reader/css/font.css">
-<link rel="stylesheet" href="css/day.css?v=5">
+<link rel="stylesheet" href="css/day.css?v=6">
 </head>
 <body>
 
@@ -81,6 +83,15 @@
     <div id="slip" class="slip" role="status" hidden></div>
   </article>
 
+  <!-- the diary by email. The address typed here arrives already filled in on Substack's own page -->
+  <form class="signup" action="https://crossingpersia.substack.com/subscribe" method="get" target="_blank" rel="noopener">
+    <label for="signup-email">Get Arion&rsquo;s journal by email every day, free</label>
+    <div class="signup-row">
+      <input id="signup-email" name="email" type="email" required autocomplete="email" placeholder="Your email">
+      <button type="submit">Subscribe</button>
+    </div>
+  </form>
+
   <!-- the picture's caption, credit and the sources, in English under every version -->
   <footer class="notes" id="notes"></footer>
 
@@ -89,6 +100,7 @@
 
 <script>var READINGS = [];</script>
 <script src="data/articles.js"></script>
-<script src="js/day.js?v=4"></script>
+<script src="js/day.js?v=5"></script>
+<script src="js/count.js"></script>
 </body>
 </html>

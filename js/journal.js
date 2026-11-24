@@ -11,9 +11,13 @@
      week 4, 8, 12 ...  arrangement B turned upside down
    To add a day, add its line to DAYS below; the right week and card are worked out automatically.
    A week with no articles yet shows placeholder pictures taken from week 1 or week 2.
-   Each day card opens its article, day.html?day=N. To send a day somewhere else, add href: "..." to its entry in DAYS. */
+   Each day card opens its article: day-N.html online, day.html?day=N on this computer. To send a day somewhere else, add href: "..." to its entry in DAYS. */
 
 (() => {
+  // Online, a link goes to the day's finished page (day-7.html), whose shared link shows that day's own title and picture.
+  // Those pages are made on GitHub, so on this computer the link goes to day.html instead.
+  const dayAddress = n => /(^|\.)crossingpersia\.com$/.test(location.hostname) ? `day-${n}.html` : `day.html?day=${n}`;
+
   // the article pictures, copied into pictures/ by tools/make_articles.py.
   // crop is the part of the picture a card shows, as [left, top, width, height], each a fraction of the whole picture.
   // It is drawn entirely inside the object so no background shows. Pictures without a crop simply fill their card.
@@ -124,7 +128,7 @@
         if (n > TODAY) continue;                    // a day that has not happened yet: its card is hidden
         const real = DAYS[n - 1];                 // the day's own article, once it exists
         const d = real || slotPic[slot];           // otherwise a placeholder picture that fits this card
-        const href = real ? (real.href || `day.html?day=${n}`) : null;   // each day opens its article page, day.html
+        const href = real ? (real.href || dayAddress(n)) : null;   // each day opens its article page
         const tag = href ? `a href="${href}"` : "div";
         html += `<${tag} class="card day s-${slot}">
             <span class="pic"><img src="${encodeURI(PICS + d.pic)}" alt="" decoding="async"${cropStyle(d.crop)}>

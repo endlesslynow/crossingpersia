@@ -71,6 +71,12 @@ def day_page(n):
     if a["pic"]:
         facts["image"] = SITE + "pictures/" + a["pic"]
     attr = lambda s: html.escape(s, quote=True)
+    # the picture shown when this day's link is shared: made by make_articles.py from the day's own picture
+    share = f"pictures/share/day-{n}.jpg"
+    has_share = (HERE / share).exists()
+    og_image = f'<meta property="og:image" content="{SITE}assets/share.jpg">'
+    og_alt = ('<meta property="og:image:alt" content="Crossing Persia: a real-time Travel Journal in 500 BCE, '
+              'over the carved face of Darius with gold cuneiform">')
     page = TEMPLATE
     swaps = [
         ("<title>Crossing Persia</title>", f"<title>Crossing Persia: Day {n}</title>"),
@@ -82,6 +88,8 @@ def day_page(n):
          f'<meta property="og:url" content="{url}">'),
         ('<meta property="og:description" content="One day of Arion\'s journey, in English, Dari and Kurmanji.">',
          f'<meta property="og:description" content="{attr(summary)}">'),
+        (og_image, f'<meta property="og:image" content="{SITE}{share}">' if has_share else og_image),
+        (og_alt, f'<meta property="og:image:alt" content="{attr(plain(a["caption"]))}">' if has_share else og_alt),
         ('<img id="hero-img" alt="">',
          f'<img id="hero-img" src="pictures/{attr(a["pic"] or "")}" alt="{attr(plain(a["caption"]))}">'),
         ('<p class="when" id="when"></p>', f'<p class="when" id="when">{html.escape(a["heading"])}</p>'),

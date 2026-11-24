@@ -182,12 +182,16 @@
     return {type:'FeatureCollection',features};
   }
 
+  // Online, a link goes to the day's finished page (day-7.html), whose shared link shows that day's own title and picture.
+  // Those pages are made on GitHub, so on this computer the link goes to day.html instead.
+  function dayAddress(n){return /(^|\.)crossingpersia\.com$/.test(location.hostname)?`day-${n}.html`:`day.html?day=${n}`;}
+
   // A stop's box: the name, "Arion is here today" if he is, then each day spent there up to today.
   // Each day opens that day's journal entry in a new tab. Days that have not happened yet are not shown.
   function stopHTML(s,i){
     const days=s.days.filter(d=>+d[0].match(/\d+/)[0]<=dayNow).map(d=>{
       const n=+d[0].match(/\d+/)[0];
-      return `<a class="popup-day" href="day.html?day=${n}" target="_blank" rel="noopener"><b>${d[0]}</b><br>${d[1]}</a>`;
+      return `<a class="popup-day" href="${dayAddress(n)}" target="_blank" rel="noopener"><b>${d[0]}</b><br>${d[1]}</a>`;
     }).join('');
     return `<h2 class="popup-title">${s.name}</h2>${i===hereIdx&&dayNow>=1&&dayNow<=lastDay?`<div class="popup-here">${manSVG} Arion is here today</div>`:''}${days}`;
   }
@@ -394,7 +398,7 @@
     const open=e=>{
       if(e.originalEvent.target.closest('.maplibregl-marker')) return;
       const p=byName[e.features[0].properties.name]; if(!p) return;
-      watch(new window.maplibregl.Popup({maxWidth:'280px'}),p.name).setLngLat(e.lngLat).setHTML(`<h2 class="popup-title">${p.name}</h2><p style="margin:8px 0 0">${MP_KIND[p.kind]||''}, named in the journal on:</p>${p.days.map(d=>`<a class="popup-day" href="day.html?day=${d}" target="_blank" rel="noopener"><b>Day ${d}</b></a>`).join('')}<a class="popup-day" target="_blank" rel="noopener noreferrer" href="${P(p.pleiades)}">Pleiades place record ↗</a>`).addTo(map);
+      watch(new window.maplibregl.Popup({maxWidth:'280px'}),p.name).setLngLat(e.lngLat).setHTML(`<h2 class="popup-title">${p.name}</h2><p style="margin:8px 0 0">${MP_KIND[p.kind]||''}, named in the journal on:</p>${p.days.map(d=>`<a class="popup-day" href="${dayAddress(d)}" target="_blank" rel="noopener"><b>Day ${d}</b></a>`).join('')}<a class="popup-day" target="_blank" rel="noopener noreferrer" href="${P(p.pleiades)}">Pleiades place record ↗</a>`).addTo(map);
     };
     MP_LAYERS.forEach(id=>{
       map.on('click',id,open);
